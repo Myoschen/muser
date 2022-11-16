@@ -1,34 +1,50 @@
-# muser
+<p align="center">
+  <img src="./icon.png" width="150px" height="150px">
+</p>
+<div align="center">
+  <h1>muser</h1>
+</div>
+<p align="center">A Simple Music Player</p>
+<p align="center">This project is built by <a href="https://github.com/alex8088/electron-vite">electron-vite</a></p>
 
-An Electron application with React and TypeScript
+<br />
+<br />
 
-## Recommended IDE Setup
+## Preview
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+![preview](./preview.png)
+
+## Usage
+
+coming up soon...
+
+## Features
+
+coming up soon...
 
 ## Project Setup
 
 ### Install
 
 ```bash
-$ npm install
+pn install
 ```
 
 ### Development
 
 ```bash
-$ npm run dev
+pn run dev
 ```
 
 ### Build
 
 ```bash
 # For windows
-$ npm run build:win
+$ pn run build:win
 
 # For macOS
-$ npm run build:mac
+$ pn run build:mac
 
 # For Linux
-$ npm run build:linux
+$ pn run build:linux
 ```
