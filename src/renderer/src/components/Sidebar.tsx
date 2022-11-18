@@ -32,7 +32,7 @@ export default function Sidebar(): JSX.Element {
       </div>
       <Divider />
       <AudioList />
-      <p className="f:12 f:light ls:2 t:center">{folderPath || 'Please select a folder.'}</p>
+      <p className="f:12 color:black/.5 ls:2 t:center">{folderPath || 'Please select a folder.'}</p>
     </div>
   )
 }

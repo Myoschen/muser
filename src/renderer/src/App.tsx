@@ -11,12 +11,12 @@ export default function App(): JSX.Element {
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
   useEffect(() => {
-    window.api.onSetup(async (event, args) => {
+    window.api.onSetup(async (_event, args) => {
       const list = await window.api.getAudioList(args['directory_path'])
       updateConfig(args)
       updateAudioList(list)
       updateCurrentAudio(0)
-      event.sender.send('app:init-finished')
+      // event.sender.send('app:init-finished')
     })
   }, [])
 
