@@ -1,28 +1,30 @@
 import { useEffect } from 'react'
 import Sidebar from '@renderer/components/Sidebar'
-import Player from '@renderer/components/Player'
+import AudioPlayer from '@renderer/components/AudioPlayer'
 import Container from '@renderer/components/Container'
-import { useAppConfig, useTrackDetail } from './store'
+import CloseApp from '@renderer/components/CloseApp'
+import useStore from '@renderer/store'
 
 export default function App(): JSX.Element {
-  const updateConfig = useAppConfig((state) => state.updateConfig)
-  const updateTrackList = useTrackDetail((state) => state.updateTrackList)
-  const updateCurrentTrack = useTrackDetail((state) => state.updateCurrentTrack)
+  const updateConfig = useStore((state) => state.updateConfig)
+  const updateAudioList = useStore((state) => state.updateAudioList)
+  const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
   useEffect(() => {
-    window.api.onSetup(async (event, args) => {
-      const list = await window.api.getTrackList(args['directory_path'])
+    window.api.onSetup(async (_event, args) => {
+      const list = await window.api.getAudioList(args['directory_path'])
       updateConfig(args)
-      updateTrackList(list)
-      updateCurrentTrack(0)
-      event.sender.send('app:init-finished')
+      updateAudioList(list)
+      updateCurrentAudio(0)
+      // event.sender.send('app:init-finished')
     })
   }, [])
 
   return (
     <Container>
       <Sidebar />
-      <Player />
+      <AudioPlayer />
+      <CloseApp />
     </Container>
   )
 }

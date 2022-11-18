@@ -14,10 +14,10 @@ function createWindow(): void {
     frame: false,
     ...(platform.isLinux
       ? {
-          icon: path.join(__dirname, '../../build/icon.png')
+          icon: path.join(__dirname, '../../assets/icon.png')
         }
       : {
-          icon: path.join(__dirname, '../../build/icon.ico')
+          icon: path.join(__dirname, '../../assets/icon.ico')
         }),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
@@ -29,6 +29,7 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     // Create Tray
     createTray(mainWindow)
+    mainWindow.show()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -85,17 +86,18 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 function setIpcHandler(): void {
-  ipcMain.once('app:init-finished', (event) => {
-    const win = BrowserWindow.fromWebContents(event.sender)
-    win?.show()
-  })
+  // ipcMain.once('app:init-finished', (event) => {
+  //   const win = BrowserWindow.fromWebContents(event.sender)
+  //   win?.show()
+  // })
   ipcMain.handle('dialog:read-directory', handler.readDirectory)
-  ipcMain.handle('music:get-track-list', handler.getTrackList)
+  ipcMain.handle('music:get-audio-list', handler.getAudioList)
   ipcMain.handle('app:close', handler.hideOrCloseWindow)
 }
 
 function createTray(win: BrowserWindow): void {
-  const icon = nativeImage.createFromPath(path.join(__dirname, '../../build/icon.png'))
+  const assetsPath = app.isPackaged ? path.join(process.resourcesPath, 'assets') : 'assets'
+  const icon = nativeImage.createFromPath(path.join(assetsPath, 'icon.ico'))
   const tray = new Tray(icon)
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Muser' },

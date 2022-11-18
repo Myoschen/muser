@@ -2,15 +2,16 @@ appId: myoschen.muser.app
 productName: Muser
 directories:
   buildResources: build
+extraResources: assets
 files:
   - '!**/.vscode/*'
   - '!src/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+afterSign: build/notarize.js
 asarUnpack:
   - '**/*.{node,dll}'
-afterSign: build/notarize.js
 win:
   executableName: Muser
 nsis:

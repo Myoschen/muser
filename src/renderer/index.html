@@ -4,10 +4,16 @@
     <meta charset="UTF-8" />
     <title>Muser</title>
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <!-- <meta
+    <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
-    /> -->
+      content="
+        default-src 'self';
+        media-src 'self' file: mp3;
+        script-src 'self';
+        font-src fonts.gstatic.com;
+        style-src 'self' fonts.googleapis.com 'unsafe-inline'
+      "
+    />
   </head>
 
   <body>

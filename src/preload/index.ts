@@ -7,8 +7,8 @@ const api = {
   readDirectory: async (): Promise<[string, string[]] | undefined> =>
     await ipcRenderer.invoke('dialog:read-directory'),
   closeApp: async (): Promise<void> => await ipcRenderer.invoke('app:close'),
-  getTrackList: async (dirPath: string): Promise<string[]> =>
-    await ipcRenderer.invoke('music:get-track-list', dirPath),
+  getAudioList: async (dirPath: string): Promise<string[]> =>
+    await ipcRenderer.invoke('music:get-audio-list', dirPath),
   onSetup: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
     ipcRenderer.once('app:init-config', callback)
   }

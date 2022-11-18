@@ -1,21 +1,29 @@
 import { BrowserWindow, dialog, IpcMainInvokeEvent } from 'electron'
-import Store from 'electron-store'
+// import Store from 'electron-store'
+import settings from 'electron-settings'
 import { readdir } from 'fs/promises'
 import { extname } from 'path'
 
-interface IStore {
+interface AppSetting {
   directory_path: string
   theme: string
   clickX: 'hide' | 'quit'
 }
 
-const store = new Store<IStore>({
-  defaults: {
+settings.configure({
+  fileName: 'app-settings.json',
+  prettify: true
+})
+
+settings.setSync({
+  app: {
     directory_path: '',
     theme: 'light',
     clickX: 'quit'
   }
 })
+
+// const store = new Store<AppStore>()
 
 async function readDirectory(): Promise<[string, string[]] | undefined> {
   const filePaths = getDirectoryPath()
@@ -23,9 +31,9 @@ async function readDirectory(): Promise<[string, string[]] | undefined> {
     return undefined
   } else {
     const dirPath = filePaths[0]
-    store.set('directory_path', dirPath)
-    const storedDirPath = store.get('directory_path')
-    const fileNames = await getFileNames(storedDirPath, ['.mp3'])
+    await settings.set('app.directory_path', dirPath)
+    const storedDirPath = settings.getSync('app.directory_path') as unknown as string
+    const fileNames = (await getFileNames(storedDirPath, ['.mp3'])) as string[]
     return [dirPath, fileNames] || undefined
   }
 }
@@ -34,19 +42,23 @@ function getDirectoryPath(): string[] | undefined {
   return dialog.showOpenDialogSync({ properties: ['openDirectory'] })
 }
 
-async function getTrackList(_event: IpcMainInvokeEvent, args: unknown): Promise<string[]> {
+async function getAudioList(
+  _event: IpcMainInvokeEvent,
+  args: unknown
+): Promise<string[] | undefined> {
   const fileNames = await getFileNames(args as string, ['.mp3'])
   return fileNames
 }
 
-async function getFileNames(dirPath: string, ext: string[]): Promise<string[]> {
+async function getFileNames(dirPath: string, ext: string[]): Promise<string[] | undefined> {
+  if (!dirPath) return undefined
   const fileNames = await readdir(dirPath)
   const filteredFileNames = await fileNames.filter((f) => ext.includes(extname(f)))
   return filteredFileNames
 }
 
-function getConfig(): IStore {
-  const result = store.store
+function getConfig(): AppSetting {
+  const result = settings.getSync('app') as unknown as AppSetting
   return result
 }
 
@@ -59,7 +71,7 @@ async function showMessage(
 }
 
 function hideOrCloseWindow(event: IpcMainInvokeEvent): void {
-  const type = store.get('clickX')
+  const type = settings.getSync('app.clickX') as unknown as AppSetting['clickX']
   const win = BrowserWindow.fromWebContents(event.sender)
   if (type === 'hide') win?.hide()
   else if (type === 'quit') win?.close()
@@ -68,7 +80,7 @@ function hideOrCloseWindow(event: IpcMainInvokeEvent): void {
 const handler = {
   readDirectory,
   getConfig,
-  getTrackList,
+  getAudioList,
   showMessage,
   hideOrCloseWindow
 }
