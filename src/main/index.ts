@@ -55,7 +55,7 @@ function createWindow(): void {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('myoschen.muser.app')
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -100,20 +100,20 @@ function createTray(win: BrowserWindow): void {
     { label: 'Muser' },
     { type: 'separator' },
     {
-      label: '版本',
+      label: 'Version',
       type: 'normal',
       click: (): void => {
-        handler.showMessage(`當前版本為 ${app.getVersion()}`, win)
+        handler.showMessage(`Current version is ${app.getVersion()}.`, win)
       }
     },
     {
-      label: '關於',
+      label: 'About',
       type: 'normal',
       click: (): void => {
-        handler.showMessage('A simple music player.', win)
+        handler.showMessage('Muser a simple music player.', win)
       }
     },
-    { label: '結束', type: 'normal', role: 'quit' }
+    { label: 'Close', type: 'normal', role: 'quit' }
   ])
   tray.on('double-click', () => {
     win.show()
