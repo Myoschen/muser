@@ -1,45 +1,39 @@
 import { BrowserWindow, dialog, IpcMainInvokeEvent } from 'electron'
-// import Store from 'electron-store'
 import settings from 'electron-settings'
 import { readdir } from 'fs/promises'
 import { extname } from 'path'
 
-interface AppSetting {
-  directory_path: string
-  theme: string
-  clickX: 'hide' | 'quit'
+interface Setting {
+  directoryPath: string
+  theme: 'light' | 'dark' | 'system'
+  closeAction: 'quit' | 'hide'
 }
 
-settings.configure({
-  fileName: 'app-settings.json',
-  prettify: true
-})
-
-settings.setSync({
-  app: {
-    directory_path: '',
-    theme: 'light',
-    clickX: 'quit'
-  }
-})
-
-// const store = new Store<AppStore>()
+if (!settings.hasSync('app')) {
+  settings.setSync({
+    app: {
+      directoryPath: '',
+      theme: 'system',
+      closeAction: 'quit'
+    }
+  })
+}
 
 async function readDirectory(): Promise<[string, string[]] | undefined> {
-  const filePaths = getDirectoryPath()
-  if (!filePaths) {
+  const paths = await getDirectoryPath()
+  if (!paths) {
     return undefined
   } else {
-    const dirPath = filePaths[0]
-    await settings.set('app.directory_path', dirPath)
-    const storedDirPath = settings.getSync('app.directory_path') as unknown as string
-    const fileNames = (await getFileNames(storedDirPath, ['.mp3'])) as string[]
-    return [dirPath, fileNames] || undefined
+    const directoryPath = paths[0]
+    await settings.set('app.directoryPath', directoryPath)
+    const stored = (await settings.get('app.directoryPath')) as unknown as string
+    const fileNames = (await getFileNames(stored, ['.mp3'])) as string[]
+    return [directoryPath, fileNames] || undefined
   }
 }
 
-function getDirectoryPath(): string[] | undefined {
-  return dialog.showOpenDialogSync({ properties: ['openDirectory'] })
+async function getDirectoryPath(): Promise<string[] | undefined> {
+  return await dialog.showOpenDialogSync({ properties: ['openDirectory'] })
 }
 
 async function getAudioList(
@@ -50,16 +44,27 @@ async function getAudioList(
   return fileNames
 }
 
-async function getFileNames(dirPath: string, ext: string[]): Promise<string[] | undefined> {
-  if (!dirPath) return undefined
-  const fileNames = await readdir(dirPath)
+async function getFileNames(path: string, ext: string[]): Promise<string[] | undefined> {
+  if (!path) return undefined
+  const fileNames = await readdir(path)
   const filteredFileNames = await fileNames.filter((f) => ext.includes(extname(f)))
   return filteredFileNames
 }
 
-function getConfig(): AppSetting {
-  const result = settings.getSync('app') as unknown as AppSetting
-  return result
+function getAppSetting(): Setting {
+  const setting = settings.getSync('app') as unknown as Setting
+  return setting
+}
+
+async function updateAppSetting(_event: IpcMainInvokeEvent, args: unknown): Promise<void> {
+  const setting = (await settings.get('app')) as unknown as Setting
+
+  await settings.setSync({
+    app: {
+      directoryPath: setting.directoryPath,
+      ...(args as Omit<Setting, 'directoryPath'>)
+    }
+  })
 }
 
 async function showMessage(
@@ -70,8 +75,8 @@ async function showMessage(
   else return await dialog.showMessageBox({ title: 'Muser', message: msg })
 }
 
-function hideOrCloseWindow(event: IpcMainInvokeEvent): void {
-  const type = settings.getSync('app.clickX') as unknown as AppSetting['clickX']
+async function closeWindow(event: IpcMainInvokeEvent): Promise<void> {
+  const type = (await settings.get('app.closeAction')) as unknown as Setting['closeAction']
   const win = BrowserWindow.fromWebContents(event.sender)
   if (type === 'hide') win?.hide()
   else if (type === 'quit') win?.close()
@@ -79,10 +84,11 @@ function hideOrCloseWindow(event: IpcMainInvokeEvent): void {
 
 const handler = {
   readDirectory,
-  getConfig,
+  getAppSetting,
   getAudioList,
   showMessage,
-  hideOrCloseWindow
+  closeWindow,
+  updateAppSetting
 }
 
 export default handler

@@ -7,11 +7,13 @@ const api = {
   readDirectory: async (): Promise<[string, string[]] | undefined> =>
     await ipcRenderer.invoke('dialog:read-directory'),
   closeApp: async (): Promise<void> => await ipcRenderer.invoke('app:close'),
-  getAudioList: async (dirPath: string): Promise<string[]> =>
-    await ipcRenderer.invoke('music:get-audio-list', dirPath),
+  getAudioList: async (directoryPath: string): Promise<string[]> =>
+    await ipcRenderer.invoke('music:get-audio-list', directoryPath),
   onSetup: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
     ipcRenderer.once('app:init-config', callback)
-  }
+  },
+  updateAppSetting: async (args: unknown): Promise<void> =>
+    await ipcRenderer.invoke('app:update-setting', args)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -31,4 +33,4 @@ if (process.contextIsolated) {
   window.api = api
 }
 
-export type tAPI = typeof api
+export type ApiTypes = typeof api

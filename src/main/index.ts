@@ -46,7 +46,7 @@ function createWindow(): void {
   }
 
   mainWindow.webContents.once('did-finish-load', () => {
-    mainWindow.webContents.send('app:init-config', handler.getConfig())
+    mainWindow.webContents.send('app:init-config', handler.getAppSetting())
   })
 }
 
@@ -86,13 +86,10 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 function setIpcHandler(): void {
-  // ipcMain.once('app:init-finished', (event) => {
-  //   const win = BrowserWindow.fromWebContents(event.sender)
-  //   win?.show()
-  // })
   ipcMain.handle('dialog:read-directory', handler.readDirectory)
   ipcMain.handle('music:get-audio-list', handler.getAudioList)
-  ipcMain.handle('app:close', handler.hideOrCloseWindow)
+  ipcMain.handle('app:update-setting', handler.updateAppSetting)
+  ipcMain.handle('app:close', handler.closeWindow)
 }
 
 function createTray(win: BrowserWindow): void {
