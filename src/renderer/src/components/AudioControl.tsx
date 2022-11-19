@@ -17,15 +17,15 @@ import { secondsToTime } from '@renderer/utils/time'
 
 export default function Control(): JSX.Element {
   // Global State
-  const folderPath = useStore((state) => state.directory_path)
+  const directoryPath = useStore((state) => state.setting.directoryPath)
   const currentAudio = useStore((state) => state.currentAudio)
   const currentAudioName = useStore((state) => state.currentAudioName)
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
   // State
-  const audioSource = useMemo(
-    () => `${folderPath}\\${currentAudioName}`,
-    [folderPath, currentAudioName]
+  const source = useMemo(
+    () => `${directoryPath}\\${currentAudioName}`,
+    [directoryPath, currentAudioName]
   )
   const audioRef = useRef<HTMLAudioElement>(null)
   const [status, setStatus] = useState({
@@ -99,7 +99,7 @@ export default function Control(): JSX.Element {
 
   useEffect(() => {
     setStatus({ ...status, isPlaying: true })
-  }, [folderPath])
+  }, [directoryPath, currentAudio])
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume
@@ -109,14 +109,14 @@ export default function Control(): JSX.Element {
     <>
       <div className="flex:1">
         <div className="w:full p:24 flex jc:space-between ai:center gap:16">
-          <span className="f:14 ls:2">00:00</span>
+          <span className="f:14 ls:2 color:#404348">00:00</span>
           <ProgressBar
             styles="flex:1"
             max={timeDetail.duration || 0}
             value={timeDetail.current}
             onChange={handleDrag}
           />
-          <span className="f:14 ls:2">
+          <span className="f:14 ls:2 color:#404348">
             {isNaN(timeDetail.duration) ? '00:00' : secondsToTime(timeDetail.duration)}
           </span>
         </div>
@@ -169,7 +169,7 @@ export default function Control(): JSX.Element {
         onEnded={handleEnded}
         onLoadedData={handleLoaded}
         onError={handleError}
-        src={audioSource}
+        src={source}
         ref={audioRef}
         autoPlay={true}
         loop={repeatType === 'once'}

@@ -6,17 +6,18 @@ import CloseApp from '@renderer/components/CloseApp'
 import useStore from '@renderer/store'
 
 export default function App(): JSX.Element {
-  const updateConfig = useStore((state) => state.updateConfig)
+  const updateSetting = useStore((state) => state.updateSetting)
   const updateAudioList = useStore((state) => state.updateAudioList)
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
   useEffect(() => {
     window.api.onSetup(async (_event, args) => {
-      const list = await window.api.getAudioList(args['directory_path'])
-      updateConfig(args)
+      console.log(args)
+
+      const list = await window.api.getAudioList(args['directoryPath'])
+      updateSetting(args)
       updateAudioList(list)
       updateCurrentAudio(0)
-      // event.sender.send('app:init-finished')
     })
   }, [])
 
