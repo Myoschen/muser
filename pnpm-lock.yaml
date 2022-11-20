@@ -6,7 +6,9 @@ specifiers:
   '@electron-toolkit/utils': ^1.0.2
   '@electron/notarize': ^1.2.3
   '@master/css': ^1.37.7
+  '@master/literal': ^1.0.11
   '@master/normal.css': ^1.9.7
+  '@master/style-element.react': ^1.1.6
   '@types/node': 16.11.22
   '@types/react': 18.0.21
   '@types/react-dom': 18.0.6
@@ -35,7 +37,9 @@ dependencies:
   '@electron-toolkit/preload': 1.0.2_electron@20.3.5
   '@electron-toolkit/utils': 1.0.2_electron@20.3.5
   '@master/css': 1.37.7
+  '@master/literal': 1.0.11
   '@master/normal.css': 1.9.7
+  '@master/style-element.react': 1.1.6_wgwxl7554b2et4n4y3cdcfad7y
   electron-settings: 4.0.2_electron@20.3.5
   electron-store: 8.1.0
   electron-updater: 4.6.5
@@ -538,8 +542,22 @@ packages:
     resolution: {integrity: sha512-2mM14u+D4+3kxS4LhKrryzlaAAvRGkW3bGWxWUzv3W2CeLT9r9UIh9zCct24cuhMJZX7DPdXYy30sLo5CMf+6w==}
     dev: false
 
+  /@master/literal/1.0.11:
+    resolution: {integrity: sha512-kS6Kev2TUseg5Ea3ZefcvXdIKOaoBTQugKaWPFp/MwSCJagMBa2HL+zahgZQKC6lvX0C17sGfjGHc8hO2L0mEw==}
+    dev: false
+
   /@master/normal.css/1.9.7:
     resolution: {integrity: sha512-vjFRTDyw8Ivg4DH1QS0Bc/jzxEUioA2d4YDYooE9bnG3lndtAHt9UhbjgZajSJdX23uDsoSTEiXEZQe4QMmE0w==}
+    dev: false
+
+  /@master/style-element.react/1.1.6_wgwxl7554b2et4n4y3cdcfad7y:
+    resolution: {integrity: sha512-hNm4+7NDixN+IpcXbXg55tp7EpCJYwWdrf11YXEilq1NgfS3dez2NyOsc4s3oOZHEu243hFLNNk8IakH8v4X9Q==}
+    peerDependencies:
+      '@master/literal': '>=1.0.7'
+      '@types/react': '>=15'
+    dependencies:
+      '@master/literal': 1.0.11
+      '@types/react': 18.0.21
     dev: false
 
   /@nodelib/fs.scandir/2.1.5:
@@ -635,7 +653,6 @@ packages:
 
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
-    dev: true
 
   /@types/react-dom/18.0.6:
     resolution: {integrity: sha512-/5OFZgfIPSwy+YuIBP/FgJnQnsxhZhjjrnxudMddeblOouIodEQ75X14Rr4wGSG/bknL+Omy9iWlLo1u/9GzAA==}
@@ -649,7 +666,6 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.1
-    dev: true
 
   /@types/responselike/1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
@@ -658,7 +674,6 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
-    dev: true
 
   /@types/semver/7.3.13:
     resolution: {integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==}
@@ -1358,7 +1373,6 @@ packages:
 
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
-    dev: true
 
   /debounce-fn/4.0.0:
     resolution: {integrity: sha512-8pYCQiL9Xdcg0UPSD3d+0KMlOjp+KGU5EPwYddgzQ7DATsg4fuUDjQtsYLmWjnk2obnNHgV3vE2Y4jejSOJVBQ==}

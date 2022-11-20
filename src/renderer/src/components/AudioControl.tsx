@@ -1,3 +1,4 @@
+import el from '@master/style-element.react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   TbPlayerPause,
@@ -11,18 +12,16 @@ import {
   TbVolumeOff
 } from 'react-icons/tb'
 import IconButton from '@renderer/components/IconButton'
-import ProgressBar from '@renderer/components/ProgressBar'
+import Slider from '@renderer/components/Slider'
 import useStore from '@renderer/store'
 import { secondsToTime } from '@renderer/utils/time'
 
-export default function Control(): JSX.Element {
-  // Global State
+export default function AudioControl(): JSX.Element {
   const directoryPath = useStore((state) => state.setting.directoryPath)
   const currentAudio = useStore((state) => state.currentAudio)
   const currentAudioName = useStore((state) => state.currentAudioName)
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
-  // State
   const source = useMemo(
     () => `${directoryPath}\\${currentAudioName}`,
     [directoryPath, currentAudioName]
@@ -41,7 +40,6 @@ export default function Control(): JSX.Element {
     duration: 0
   })
 
-  // Handler
   const handleUpdateTime = (): void => {
     if (audioRef.current) {
       const current = audioRef.current.currentTime
@@ -107,20 +105,20 @@ export default function Control(): JSX.Element {
 
   return (
     <>
-      <div className="flex:1">
-        <div className="w:full p:24 flex jc:space-between ai:center gap:16">
-          <span className="f:14 ls:2 color:#404348">00:00</span>
-          <ProgressBar
+      <Container>
+        <DurationContainer>
+          <DurationText>00:00</DurationText>
+          <DurationText className="o:1">
+            {isNaN(timeDetail.duration) ? '00:00' : secondsToTime(timeDetail.duration)}
+          </DurationText>
+          <Slider
             styles="flex:1"
             max={timeDetail.duration || 0}
             value={timeDetail.current}
             onChange={handleDrag}
           />
-          <span className="f:14 ls:2 color:#404348">
-            {isNaN(timeDetail.duration) ? '00:00' : secondsToTime(timeDetail.duration)}
-          </span>
-        </div>
-        <div className="mt:12 flex jc:center gap:24">
+        </DurationContainer>
+        <Control>
           <div
             className="rel"
             onMouseEnter={(): void => setIsDisplay(true)}
@@ -130,17 +128,12 @@ export default function Control(): JSX.Element {
               {status.isMuted || volume === 0 ? <TbVolumeOff /> : <TbVolume />}
             </IconButton>
             <div
-              className={`abs top:-50% left:50% h:32 p:8 r:4 shadow:0|1|4|black/.1 transform-origin:left rotate(-90deg) bg:white ${
-                isDisplay ? 'flex' : 'hide'
-              }`}
+              className={
+                (isDisplay ? 'flex' : 'hide') +
+                ' abs top:-50% left:50% h:32 p:8 r:4 bg:secondary bg:secondary-dark@dark transform-origin:left rotate(-90deg)'
+              }
             >
-              <ProgressBar
-                max={1.0}
-                value={volume}
-                onChange={handleVolume}
-                step={0.1}
-                styles="w:80px"
-              />
+              <Slider max={1.0} value={volume} onChange={handleVolume} step={0.1} styles="w:80px" />
             </div>
           </div>
           <IconButton onClick={handlePrev} disabled={!status.isLoaded}>
@@ -161,8 +154,8 @@ export default function Control(): JSX.Element {
               <TbRepeat />
             )}
           </IconButton>
-        </div>
-      </div>
+        </Control>
+      </Container>
       <audio
         onLoadedMetadata={handleUpdateTime}
         onTimeUpdate={handleUpdateTime}
@@ -179,3 +172,30 @@ export default function Control(): JSX.Element {
     </>
   )
 }
+
+const Container = el.div`
+  flex:1
+`
+
+const DurationContainer = el.div`
+  w:full
+  p:24
+  flex
+  jc:space-between
+  ai:center
+  gap:16
+`
+
+const DurationText = el.span`
+  f:14
+  ls:2
+  color:primary
+  color:primary-dark@dark
+`
+
+const Control = el.div`
+  mt:12
+  flex
+  jc:center
+  gap:24
+`

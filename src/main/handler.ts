@@ -5,7 +5,7 @@ import { extname } from 'path'
 
 interface Setting {
   directoryPath: string
-  theme: 'light' | 'dark' | 'system'
+  theme: 'light' | 'dark'
   closeAction: 'quit' | 'hide'
 }
 
@@ -13,7 +13,7 @@ if (!settings.hasSync('app')) {
   settings.setSync({
     app: {
       directoryPath: '',
-      theme: 'system',
+      theme: 'light',
       closeAction: 'quit'
     }
   })

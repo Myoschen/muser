@@ -3,7 +3,7 @@ import { StoreState } from './index'
 
 export interface Setting {
   directoryPath: string
-  theme: 'light' | 'dark' | 'system'
+  theme: 'light' | 'dark'
   closeAction: 'hide' | 'quit'
 }
 
@@ -15,7 +15,7 @@ export interface SettingSlice {
 export const createSettingSlice: StateCreator<StoreState, [], [], SettingSlice> = (set) => ({
   setting: {
     directoryPath: '',
-    theme: 'system',
+    theme: 'light',
     closeAction: 'quit'
   },
   updateSetting: (settings): void =>
