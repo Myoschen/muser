@@ -5,7 +5,7 @@ export default function AudioTitle(): JSX.Element {
 
   return (
     <div className="drag-region:drag rel flex jc:space-between ai:center">
-      <p className="flex:1 p:24 f:20 t:center color:#404348 ls:2">
+      <p className="flex:1 p:24 f:20 t:center color:primary color:primary-dark@dark ls:2">
         {currentAudioName ? currentAudioName.split('.')[0] : 'Muser - A Simple Music Player'}
       </p>
     </div>

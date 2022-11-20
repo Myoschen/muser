@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import { TbChartCandle, TbFolder } from 'react-icons/tb'
+import el from '@master/style-element.react'
+import AudioList from '@renderer/components/AudioList'
+import SettingModal from '@renderer/components/SettingModal'
 import IconButton from '@renderer/components/IconButton'
 import Divider from '@renderer/components/Divider'
-import AudioList from '@renderer/components/AudioList'
 import useStore from '@renderer/store'
-import SettingModal from './SettingModal'
-import { useState } from 'react'
 
 export default function Sidebar(): JSX.Element {
   const directoryPath = useStore((state) => state.setting.directoryPath)
@@ -12,8 +13,9 @@ export default function Sidebar(): JSX.Element {
   const updateAudioList = useStore((state) => state.updateAudioList)
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false) // If true will open setting modal
 
+  // Get directory path through dialog
   const handleSelectFolder = async (): Promise<void> => {
     const result = await window.api.readDirectory()
     if (result === undefined) {
@@ -31,22 +33,44 @@ export default function Sidebar(): JSX.Element {
 
   return (
     <>
-      <div className="p:16 flex flex:col br:1|solid|black/.05 overflow:auto">
-        <div className="drag-region:drag flex jc:space-between ai:center bg:white">
+      <Container>
+        <Control>
           <IconButton onClick={handleSelectFolder}>
             <TbFolder />
           </IconButton>
           <IconButton onClick={handleModal}>
             <TbChartCandle />
           </IconButton>
-        </div>
+        </Control>
         <Divider />
         <AudioList />
-        <p className="f:12 color:#404348 ls:2 t:center">
-          {directoryPath || 'Please select a folder.'}
-        </p>
-      </div>
+        <Reminder>{directoryPath || 'Please select a folder.'}</Reminder>
+      </Container>
       <SettingModal isOpen={isOpen} close={handleModal} />
     </>
   )
 }
+
+const Container = el.div`p:16
+  flex
+  flex:col
+  bg:secondary/.5
+  bg:secondary-dark/.98@dark
+  br:1|solid|black/.05
+  overflow:auto
+`
+
+const Control = el.div`
+  drag-region:drag
+  flex
+  jc:space-between
+  ai:center
+`
+
+const Reminder = el.p`
+  f:12
+  ls:2
+  t:center
+  color:primary
+  color:primary-dark@dark
+`
