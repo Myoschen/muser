@@ -76,7 +76,7 @@ export default function SettingModal({
                 checked={closeAction === 'quit'}
                 onChange={handleCloseAction}
               />
-              <Label htmlFor="quit">Quit</Label>
+              <Label htmlFor="quit">quit</Label>
               <input
                 type="radio"
                 value="hide"
@@ -84,7 +84,7 @@ export default function SettingModal({
                 checked={closeAction === 'hide'}
                 onChange={handleCloseAction}
               />
-              <Label htmlFor="hide">Hide</Label>
+              <Label htmlFor="hide">hide</Label>
             </div>
           </ModelForm>
           <Control>
@@ -126,12 +126,14 @@ const ModelContainer = el.div`
   fixed
   top:50%
   left:50%
+  w:500
   translate(-50%,-50%)
 `
 
 const ModelBody = el.div`
   p:24|16
   r:8
+  w:full
   grid
   bg:secondary
   bg:secondary-dark@dark

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import el from '@master/style-element.react'
 import Sidebar from '@renderer/components/Sidebar'
 import AudioPlayer from '@renderer/components/AudioPlayer'
@@ -20,10 +20,15 @@ export default function App(): JSX.Element {
     })
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const body = document.querySelector('body')
-    body?.classList.toggle('light')
-    body?.classList.toggle('dark')
+    if (theme === 'light') {
+      body?.classList.add('light')
+      body?.classList.remove('dark')
+    } else {
+      body?.classList.add('dark')
+      body?.classList.remove('light')
+    }
   }, [theme])
 
   return (
