@@ -7,15 +7,15 @@ import { Style, init } from '@master/css'
 Style.extend('classes', {
   scrollbar: `
     {w:5;h:5;rounded}::scrollbar
-    bg:fade-90::scrollbar
-    bg:gray-22::scrollbar@dark
+    bg:secondary-dark/.05::scrollbar
+    bg:secondary/.05::scrollbar@dark
     bg:transparent::scrollbar-corner
-    bg:fade-88::scrollbar-thumb
-    bg:fade-78::scrollbar-thumb:hover
-    bg:fade-66::scrollbar-thumb:active
-    bg:gray-30::scrollbar-thumb@dark
-    bg:gray-60::scrollbar-thumb:hover@dark
-    bg:gray-60::scrollbar-thumb:active@dark
+    bg:primary/.5::scrollbar-thumb
+    bg:primary/.3::scrollbar-thumb:hover
+    bg:primary/.15::scrollbar-thumb:active
+    bg:primary-dark/.5::scrollbar-thumb@dark
+    bg:primary-dark/.3::scrollbar-thumb:hover@dark
+    bg:primary-dark/.15::scrollbar-thumb:active@dark
     rounded::scrollbar-thumb
   `
 })
