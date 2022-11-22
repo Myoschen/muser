@@ -6,6 +6,7 @@ specifiers:
   '@electron-toolkit/utils': ^1.0.2
   '@electron/notarize': ^1.2.3
   '@master/css': ^1.37.7
+  '@master/keyframes.css': 2.0.0-beta.47
   '@master/literal': ^1.0.11
   '@master/normal.css': ^1.9.7
   '@master/style-element.react': ^1.1.6
@@ -37,6 +38,7 @@ dependencies:
   '@electron-toolkit/preload': 1.0.2_electron@20.3.5
   '@electron-toolkit/utils': 1.0.2_electron@20.3.5
   '@master/css': 1.37.7
+  '@master/keyframes.css': 2.0.0-beta.47
   '@master/literal': 1.0.11
   '@master/normal.css': 1.9.7
   '@master/style-element.react': 1.1.6_wgwxl7554b2et4n4y3cdcfad7y
@@ -540,6 +542,10 @@ packages:
 
   /@master/css/1.37.7:
     resolution: {integrity: sha512-2mM14u+D4+3kxS4LhKrryzlaAAvRGkW3bGWxWUzv3W2CeLT9r9UIh9zCct24cuhMJZX7DPdXYy30sLo5CMf+6w==}
+    dev: false
+
+  /@master/keyframes.css/2.0.0-beta.47:
+    resolution: {integrity: sha512-PkpTDmg+PEPLjYvbi2bCmq1rkOLj1ErCD87ilt0aV2iD1sI5enGv0i1b5xfYYXc+MKBPz69gHD+Xpox6+2pulA==}
     dev: false
 
   /@master/literal/1.0.11:

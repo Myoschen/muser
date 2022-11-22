@@ -10,9 +10,9 @@ Style.extend('classes', {
     bg:secondary-dark/.05::scrollbar
     bg:secondary/.05::scrollbar@dark
     bg:transparent::scrollbar-corner
-    bg:primary/.5::scrollbar-thumb
-    bg:primary/.3::scrollbar-thumb:hover
-    bg:primary/.15::scrollbar-thumb:active
+    bg:primary/.3::scrollbar-thumb
+    bg:primary/.45::scrollbar-thumb:hover
+    bg:primary/.6::scrollbar-thumb:active
     bg:primary-dark/.5::scrollbar-thumb@dark
     bg:primary-dark/.3::scrollbar-thumb:hover@dark
     bg:primary-dark/.15::scrollbar-thumb:active@dark

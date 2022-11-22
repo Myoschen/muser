@@ -1,5 +1,5 @@
-import el from '@master/style-element.react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import el from '@master/style-element.react'
 import {
   TbPlayerPause,
   TbPlayerPlay,
@@ -17,6 +17,7 @@ import useStore from '@renderer/store'
 import { secondsToTime } from '@renderer/utils/time'
 
 export default function AudioControl(): JSX.Element {
+  const defaultVolume = useStore((state) => state.setting.defaultVolume)
   const directoryPath = useStore((state) => state.setting.directoryPath)
   const currentAudio = useStore((state) => state.currentAudio)
   const currentAudioName = useStore((state) => state.currentAudioName)
@@ -29,11 +30,10 @@ export default function AudioControl(): JSX.Element {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [status, setStatus] = useState({
     isPlaying: false,
-    isLoaded: false,
-    isMuted: false
+    isLoaded: false
   })
   const [isDisplay, setIsDisplay] = useState(false)
-  const [volume, setVolume] = useState(0.5)
+  const [volume, setVolume] = useState(0)
   const [repeatType, setRepeatType] = useState<'off' | 'once' | 'all'>('off')
   const [timeDetail, setTimeDetail] = useState({
     current: 0,
@@ -93,11 +93,15 @@ export default function AudioControl(): JSX.Element {
   const handleError = (): void => setStatus({ ...status, isLoaded: false })
   const handleVolume = (e: React.ChangeEvent<HTMLInputElement>): void =>
     setVolume(Number(e.target.value))
-  const handleMuted = (): void => setStatus({ ...status, isMuted: !status.isMuted })
+  const handleDisplay = (): void => setIsDisplay(!isDisplay)
 
   useEffect(() => {
     setStatus({ ...status, isPlaying: true })
   }, [directoryPath, currentAudio])
+
+  useEffect(() => {
+    setVolume(defaultVolume)
+  }, [defaultVolume])
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume
@@ -105,6 +109,18 @@ export default function AudioControl(): JSX.Element {
 
   return (
     <>
+      <audio
+        onLoadedMetadata={handleUpdateTime}
+        onTimeUpdate={handleUpdateTime}
+        onEnded={handleEnded}
+        onLoadedData={handleLoaded}
+        onError={handleError}
+        src={source}
+        ref={audioRef}
+        autoPlay={true}
+        loop={repeatType === 'once'}
+        preload="auto"
+      />
       <Container>
         <DurationContainer>
           <DurationText>00:00</DurationText>
@@ -119,56 +135,57 @@ export default function AudioControl(): JSX.Element {
           />
         </DurationContainer>
         <Control>
-          <div
-            className="rel"
-            onMouseEnter={(): void => setIsDisplay(true)}
-            onMouseLeave={(): void => setIsDisplay(false)}
-          >
-            <IconButton onClick={handleMuted} disabled={!status.isLoaded}>
-              {status.isMuted || volume === 0 ? <TbVolumeOff /> : <TbVolume />}
-            </IconButton>
+          <div className="rel">
+            <IconButton
+              icon={volume === 0 ? <TbVolumeOff /> : <TbVolume />}
+              onClick={handleDisplay}
+              disabled={!status.isLoaded}
+            />
             <div
               className={
                 (isDisplay ? 'flex' : 'hide') +
-                ' abs top:-50% left:50% h:32 p:8 r:4 bg:secondary bg:secondary-dark@dark transform-origin:left rotate(-90deg)'
+                ' abs top:-80% left:50% h:32 p:8 r:4 b:1|solid|primary/.15 border-color:primary-dark/.15@dark bg:secondary bg:secondary-dark@dark transform-origin:left rotate(-90deg)'
               }
             >
-              <Slider max={1.0} value={volume} onChange={handleVolume} step={0.1} styles="w:80px" />
+              <Slider
+                max={1.0}
+                value={volume}
+                onChange={handleVolume}
+                step={0.01}
+                styles="w:80px"
+              />
             </div>
           </div>
-          <IconButton onClick={handlePrev} disabled={!status.isLoaded}>
-            <TbPlayerTrackPrev />
-          </IconButton>
-          <IconButton onClick={handlePlay} disabled={!status.isLoaded}>
-            {status.isPlaying ? <TbPlayerPause /> : <TbPlayerPlay />}
-          </IconButton>
-          <IconButton onClick={handleNext} disabled={!status.isLoaded}>
-            <TbPlayerTrackNext />
-          </IconButton>
-          <IconButton onClick={handleRepeatType} disabled={!status.isLoaded}>
-            {repeatType === 'off' ? (
-              <TbRepeatOff />
-            ) : repeatType === 'once' ? (
-              <TbRepeatOnce />
-            ) : (
-              <TbRepeat />
-            )}
-          </IconButton>
+          <IconButton
+            icon={<TbPlayerTrackPrev />}
+            onClick={handlePrev}
+            disabled={!status.isLoaded}
+          />
+          <IconButton
+            icon={status.isPlaying ? <TbPlayerPause /> : <TbPlayerPlay />}
+            onClick={handlePlay}
+            disabled={!status.isLoaded}
+          />
+          <IconButton
+            icon={<TbPlayerTrackNext />}
+            onClick={handleNext}
+            disabled={!status.isLoaded}
+          />
+          <IconButton
+            icon={
+              repeatType === 'off' ? (
+                <TbRepeatOff />
+              ) : repeatType === 'once' ? (
+                <TbRepeatOnce />
+              ) : (
+                <TbRepeat />
+              )
+            }
+            onClick={handleRepeatType}
+            disabled={!status.isLoaded}
+          />
         </Control>
       </Container>
-      <audio
-        onLoadedMetadata={handleUpdateTime}
-        onTimeUpdate={handleUpdateTime}
-        onEnded={handleEnded}
-        onLoadedData={handleLoaded}
-        onError={handleError}
-        src={source}
-        ref={audioRef}
-        autoPlay={true}
-        loop={repeatType === 'once'}
-        muted={status.isMuted}
-        preload="auto"
-      ></audio>
     </>
   )
 }

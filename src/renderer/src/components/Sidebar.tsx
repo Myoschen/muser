@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { TbChartCandle, TbFolder } from 'react-icons/tb'
+import { TbChartCandle, TbFolder, TbRefresh } from 'react-icons/tb'
 import el from '@master/style-element.react'
 import AudioList from '@renderer/components/AudioList'
 import SettingModal from '@renderer/components/SettingModal'
 import IconButton from '@renderer/components/IconButton'
 import Divider from '@renderer/components/Divider'
 import useStore from '@renderer/store'
+import notify from '@renderer/utils/notify'
 
 export default function Sidebar(): JSX.Element {
   const directoryPath = useStore((state) => state.setting.directoryPath)
@@ -14,14 +15,17 @@ export default function Sidebar(): JSX.Element {
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
   const [isOpen, setIsOpen] = useState(false) // If true will open setting modal
+  const [animation, setAnimation] = useState({
+    rotate: false
+  })
 
   // Get directory path through dialog
   const handleSelectFolder = async (): Promise<void> => {
     const result = await window.api.readDirectory()
     if (result === undefined) {
-      new Notification('Muser', { body: 'You must select a folder!' })
+      notify.info('You must select a folder!')
     } else if (result[1].length === 0) {
-      new Notification('Muser', { body: 'There are no audio files in this directory!' })
+      notify.info('There are no audio files in this directory!')
     } else {
       updateSetting({ directoryPath: result[0] })
       updateAudioList(result[1])
@@ -31,20 +35,35 @@ export default function Sidebar(): JSX.Element {
 
   const handleModal = (): void => setIsOpen(!isOpen)
 
+  const handleReload = async (): Promise<void> => {
+    setAnimation({ ...animation, rotate: true })
+    const list = await window.api.getAudioList(directoryPath)
+    updateAudioList(list)
+  }
+
   return (
     <>
       <Container>
         <Control>
-          <IconButton onClick={handleSelectFolder}>
-            <TbFolder />
-          </IconButton>
-          <IconButton onClick={handleModal}>
-            <TbChartCandle />
-          </IconButton>
+          <IconButton icon={<TbFolder />} onClick={handleSelectFolder} />
+          <IconButton icon={<TbChartCandle />} onClick={handleModal} />
         </Control>
         <Divider />
         <AudioList />
-        <Reminder>{directoryPath || 'Please select a folder.'}</Reminder>
+        <StatusBar>
+          <IconButton
+            icon={
+              <TbRefresh
+                className={animation.rotate ? '@rotate|1s' : ''}
+                onAnimationEnd={(): void => setAnimation({ ...animation, rotate: false })}
+              />
+            }
+            onClick={handleReload}
+          />
+          <span className="f:12 ls:2 color:primary color:primary-dark@dark">
+            {directoryPath || 'Please select a folder containing audio.'}
+          </span>
+        </StatusBar>
       </Container>
       <SettingModal isOpen={isOpen} close={handleModal} />
     </>
@@ -67,10 +86,9 @@ const Control = el.div`
   ai:center
 `
 
-const Reminder = el.p`
-  f:12
-  ls:2
-  t:center
-  color:primary
-  color:primary-dark@dark
+const StatusBar = el.div`
+  flex
+  jc:center
+  ai:center
+  gap-x:8
 `

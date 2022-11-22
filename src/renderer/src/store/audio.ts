@@ -5,7 +5,7 @@ export interface AudioSlice {
   audioList: string[] | undefined
   currentAudio: number | undefined
   currentAudioName: string | undefined
-  updateAudioList: (trackList: string[]) => void
+  updateAudioList: (list: string[]) => void
   updateCurrentAudio: (index: number) => void
 }
 
@@ -13,7 +13,7 @@ export const createAudioSlice: StateCreator<StoreState, [], [], AudioSlice> = (s
   audioList: undefined,
   currentAudio: undefined,
   currentAudioName: undefined,
-  updateAudioList: (audioList): void => set((state) => ({ ...state, audioList })),
+  updateAudioList: (list): void => set((state) => ({ ...state, audioList: list })),
   updateCurrentAudio: (index: number): void =>
     set((state) => {
       const length = state.audioList?.length as number

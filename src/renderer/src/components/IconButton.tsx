@@ -1,18 +1,14 @@
 import el from '@master/style-element.react'
 
-interface IconButtonProps {
-  children: React.ReactNode
-  onClick: () => void
-  onMouseEnter?: () => void
-  onMouseLeave?: () => void
-  disabled?: boolean
+interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  icon: React.ReactNode
   styles?: string
 }
 
-export default function IconButton({ children, styles, ...props }: IconButtonProps): JSX.Element {
+export default function IconButton({ icon, styles, ...props }: IconButtonProps): JSX.Element {
   return (
     <Button className={styles} {...props}>
-      {children}
+      {icon}
     </Button>
   )
 }

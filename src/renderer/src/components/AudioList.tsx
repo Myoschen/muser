@@ -9,8 +9,8 @@ export default function AudioList(): JSX.Element {
   return (
     <List>
       {AudioList &&
-        AudioList.map((audioName, index) => (
-          <AudioItem key={`${directoryPath}\\${audioName}`} index={index} audioName={audioName} />
+        AudioList.map((audio, index) => (
+          <AudioItem key={`${directoryPath}\\${audio}`} index={index} audio={audio} />
         ))}
     </List>
   )

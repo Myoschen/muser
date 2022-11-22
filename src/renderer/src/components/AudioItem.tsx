@@ -1,17 +1,20 @@
 import el from '@master/style-element.react'
 import useStore from '@renderer/store'
+import { useMemo } from 'react'
 
 interface AudioItemProps {
   index: number
-  audioName: string
+  audio: string
 }
 
-export default function AudioItem({ index, audioName }: AudioItemProps): JSX.Element {
+export default function AudioItem({ index, audio }: AudioItemProps): JSX.Element {
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
+  const name = useMemo(() => audio.split('.')[0], [audio])
+  const handleClick = (): void => updateCurrentAudio(index)
 
   return (
     <Item>
-      <Button onClick={(): void => updateCurrentAudio(index)}>{audioName.split('.')[0]}</Button>
+      <Button onClick={handleClick}>{name}</Button>
     </Item>
   )
 }

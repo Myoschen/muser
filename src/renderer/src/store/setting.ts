@@ -5,6 +5,7 @@ export interface Setting {
   directoryPath: string
   theme: 'light' | 'dark'
   closeAction: 'hide' | 'quit'
+  defaultVolume: number
 }
 
 export interface SettingSlice {
@@ -16,8 +17,10 @@ export const createSettingSlice: StateCreator<StoreState, [], [], SettingSlice> 
   setting: {
     directoryPath: '',
     theme: 'light',
-    closeAction: 'quit'
+    closeAction: 'quit',
+    defaultVolume: 0.5
   },
+  isReady: false,
   updateSetting: (settings): void =>
     set((state) => ({ setting: { ...state.setting, ...settings } }))
 })

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import el from '@master/style-element.react'
 import useStore, { Setting } from '@renderer/store'
@@ -15,14 +15,31 @@ export default function SettingModal({
   /* State */
   const setting = useStore((state) => state.setting)
   const updateSetting = useStore((state) => state.updateSetting)
-  const [theme, setTheme] = useState<typeof setting['theme']>(setting.theme)
-  const [closeAction, setCloseAction] = useState<typeof setting['closeAction']>(setting.closeAction)
+  const [defaultVolume, setDefaultVolume] = useState<Setting['defaultVolume']>()
+  const [theme, setTheme] = useState<Setting['theme']>()
+  const [closeAction, setCloseAction] = useState<Setting['closeAction']>()
+
+  const settingMemo = useMemo(
+    () => ({
+      theme: setting.theme,
+      defaultVolume: setting.defaultVolume,
+      closeAction: setting.closeAction
+    }),
+    [setting.theme, setting.defaultVolume, setting.closeAction]
+  )
 
   /* Handler */
+  const handleDefaultVolume = (e: React.ChangeEvent<HTMLInputElement>): void =>
+    setDefaultVolume(Number(e.target.value))
   const handleCloseModel = (): void => {
-    if (setting.theme !== theme || setting.closeAction !== closeAction) {
+    if (
+      setting.theme !== theme ||
+      setting.closeAction !== closeAction ||
+      setting.defaultVolume !== defaultVolume
+    ) {
       setTheme(setting.theme)
       setCloseAction(setting.closeAction)
+      setDefaultVolume(setting.defaultVolume)
     }
     close()
   }
@@ -35,9 +52,25 @@ export default function SettingModal({
     setCloseAction(checked)
   }
   const handleSave = async (): Promise<void> => {
-    await window.api.updateAppSetting({ theme, closeAction })
-    updateSetting({ theme, closeAction })
+    await window.api.updateAppSetting({ theme, closeAction, defaultVolume })
+    updateSetting({ theme, closeAction, defaultVolume })
   }
+
+  useEffect(() => {
+    setTheme(setting.theme)
+    setCloseAction(setting.closeAction)
+    setDefaultVolume(setting.defaultVolume)
+  }, [settingMemo])
+
+  useEffect(() => {
+    const bodyClasses = window.document.body.classList
+    if (isOpen) {
+      bodyClasses.add('overflow:hidden')
+    }
+    return () => {
+      bodyClasses.remove('overflow:hidden')
+    }
+  }, [isOpen])
 
   const modal = (
     <>
@@ -47,18 +80,21 @@ export default function SettingModal({
         <ModelBody className="p:24|16 r:8 bg:white grid">
           <ModelTitle>Setting</ModelTitle>
           <ModelForm>
-            <Label htmlFor="directoryPath">Directory Path</Label>
+            <Label htmlFor="defaultVolume">Default Volume</Label>
             <input
-              className="p:6|12 r:4 b:1|solid|secondary-dark/.25 border-color:secondary/.25@dark f:14 f:light ls:1 color:gray-80:disabled"
-              type="text"
-              name="directoryPath"
-              id="directoryPath"
-              value={setting.directoryPath}
-              disabled
+              className="p:6|12 r:4 b:1|solid|secondary-dark/.25 border-color:secondary/.25@dark f:14 f:light ls:1 color:primary color:primary-dark@dark outline:none"
+              type="number"
+              name="defaultVolume"
+              id="defaultVolume"
+              value={defaultVolume}
+              onChange={handleDefaultVolume}
+              max={1}
+              min={0}
+              step={0.01}
             />
             <Label htmlFor="theme">Theme</Label>
             <select
-              className="p:6|12 r:4 b:1|solid|secondary-dark/.25 border-color:secondary/.25@dark f:14 f:light ls:1 color:primary color:primary-dark@dark"
+              className="p:6|12 r:4 b:1|solid|secondary-dark/.25 border-color:secondary/.25@dark f:14 f:light ls:1 color:primary color:primary-dark@dark outline:none"
               name="theme"
               id="theme"
               value={theme}
@@ -99,16 +135,6 @@ export default function SettingModal({
       </ModelContainer>
     </>
   )
-
-  useEffect(() => {
-    const bodyClasses = window.document.body.classList
-    if (isOpen) {
-      bodyClasses.add('overflow:hidden')
-    }
-    return () => {
-      bodyClasses.remove('overflow:hidden')
-    }
-  }, [isOpen])
 
   return isOpen ? createPortal(modal, window.document.body) : null
 }
