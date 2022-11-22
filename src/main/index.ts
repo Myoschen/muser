@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'ele
 import { electronApp, optimizer, is, platform } from '@electron-toolkit/utils'
 import * as path from 'path'
 import handler from './handler'
+import { Channel } from './contants'
 
 function createWindow(): void {
   // Create the browser window.
@@ -27,7 +28,6 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
-    // Create Tray
     createTray(mainWindow)
     mainWindow.show()
   })
@@ -46,7 +46,7 @@ function createWindow(): void {
   }
 
   mainWindow.webContents.once('did-finish-load', () => {
-    mainWindow.webContents.send('app:init-config', handler.getAppSetting())
+    mainWindow.webContents.send(Channel.APP_SETTING_SETUP, handler.getAppSetting())
   })
 }
 
@@ -86,10 +86,10 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 function setIpcHandler(): void {
-  ipcMain.handle('dialog:read-directory', handler.readDirectory)
-  ipcMain.handle('music:get-audio-list', handler.getAudioList)
-  ipcMain.handle('app:update-setting', handler.updateAppSetting)
-  ipcMain.handle('app:close', handler.closeWindow)
+  ipcMain.handle(Channel.FS_READ_DIRECTORY, handler.readDirectory)
+  ipcMain.handle(Channel.FS_GET_AUDIO_LIST, handler.getAudioList)
+  ipcMain.handle(Channel.APP_SETTING_UPDATE, handler.updateAppSetting)
+  ipcMain.handle(Channel.APP_CLOSE, handler.closeWindow)
 }
 
 function createTray(win: BrowserWindow): void {

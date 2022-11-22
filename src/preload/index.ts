@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { Channel } from '../main/contants'
 
 // Custom APIs for renderer
 const api = {
-  readDirectory: async (): Promise<[string, string[]] | undefined> =>
-    await ipcRenderer.invoke('dialog:read-directory'),
-  closeApp: async (): Promise<void> => await ipcRenderer.invoke('app:close'),
-  getAudioList: async (directoryPath: string): Promise<string[]> =>
-    await ipcRenderer.invoke('music:get-audio-list', directoryPath),
   onSetup: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
-    ipcRenderer.once('app:init-config', callback)
+    ipcRenderer.once(Channel.APP_SETTING_SETUP, callback)
   },
   updateAppSetting: async (args: unknown): Promise<void> =>
-    await ipcRenderer.invoke('app:update-setting', args)
+    await ipcRenderer.invoke(Channel.APP_SETTING_UPDATE, args),
+  closeApp: async (): Promise<void> => await ipcRenderer.invoke(Channel.APP_CLOSE),
+  readDirectory: async (): Promise<[string, string[]] | undefined> =>
+    await ipcRenderer.invoke(Channel.FS_READ_DIRECTORY),
+  getAudioList: async (directoryPath: string): Promise<string[]> =>
+    await ipcRenderer.invoke(Channel.FS_GET_AUDIO_LIST, directoryPath)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -33,4 +34,4 @@ if (process.contextIsolated) {
   window.api = api
 }
 
-export type ApiTypes = typeof api
+export type API_TYPES = typeof api

@@ -1,9 +1,9 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import type { ApiTypes } from './index'
+import type { API_TYPES } from './index'
 
 declare global {
   interface Window {
     electron: ElectronAPI
-    api: ApiTypes
+    api: API_TYPES
   }
 }
