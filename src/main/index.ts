@@ -55,9 +55,11 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  installExtension(REACT_DEVELOPER_TOOLS, { loadExtensionOptions: { allowFileAccess: true } })
-    .then((name) => console.log(`Added Extension: ${name}`))
-    .catch((error) => console.error(`An error occurred: ${error}`))
+  if (is.dev) {
+    installExtension(REACT_DEVELOPER_TOOLS, { loadExtensionOptions: { allowFileAccess: true } })
+      .then((name) => console.log(`Added Extension: ${name}`))
+      .catch((error) => console.error(`An error occurred: ${error}`))
+  }
 
   // Set app user model id for windows
   electronApp.setAppUserModelId('myoschen.muser.app')

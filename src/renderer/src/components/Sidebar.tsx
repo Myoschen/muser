@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { TbChartCandle, TbFolder, TbRefresh } from 'react-icons/tb'
 import el from '@master/style-element.react'
 import AudioList from '@renderer/components/AudioList'
@@ -58,7 +58,7 @@ export default function Sidebar(): JSX.Element {
             }
             onClick={handleReload}
           />
-          <span className="f:12 ls:2 color:primary color:primary-dark@dark">
+          <span className="f:14 ls:2 color:primary color:primary-dark@dark">
             {directoryPath || 'Please select a folder containing audio.'}
           </span>
         </StatusBar>
@@ -85,8 +85,8 @@ const Control = el.div`
 `
 
 const StatusBar = el.div`
-  flex
-  jc:center
+  grid
+  grid-template-cols:50px|auto
   ai:center
-  gap-x:8
+  ji:start
 `

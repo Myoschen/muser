@@ -103,23 +103,29 @@ export default function SettingModal(props: SettingModalProps): React.ReactPorta
               <option value="dark">dark</option>
             </select>
             <Label htmlFor="closeAction">Close Action</Label>
-            <div className="flex ai:center f:14 gap:8" id="closeAction">
-              <input
+            <div className="flex gap:8" id="closeAction">
+              <Radio
                 type="radio"
                 value="quit"
                 id="quit"
                 checked={closeAction === 'quit'}
                 onChange={handleCloseAction}
               />
-              <Label htmlFor="quit">quit</Label>
-              <input
+              <RadioLabel htmlFor="quit">
+                <RadioChecked />
+                quit
+              </RadioLabel>
+              <Radio
                 type="radio"
                 value="hide"
                 id="hide"
                 checked={closeAction === 'hide'}
                 onChange={handleCloseAction}
               />
-              <Label htmlFor="hide">hide</Label>
+              <RadioLabel htmlFor="hide">
+                <RadioChecked />
+                hide
+              </RadioLabel>
             </div>
           </ModelForm>
           <Control>
@@ -212,4 +218,42 @@ const Button = el.button`
   bg:secondary/.05:active@dark
   bg:secondary/.1:hover@dark
   ~background-color|150ms|ease-in
+`
+
+const Radio = el.input`
+  hide
+  opacity:1:checked+label>span::after
+`
+
+const RadioLabel = el.label`
+  flex
+  ai:center
+  gap:4
+  cursor:pointer
+  color:primary
+  color:primary-dark@dark
+`
+
+const RadioChecked = el.span`
+  rel
+  inline-block
+  w:14
+  h:14
+  b:2|solid
+  border-color:primary
+  border-color:primary-dark@dark
+  r:50%
+  abs::after
+  top:50%::after
+  left:50%::after
+  content:""::after
+  block::after
+  h:6::after
+  w:6::after
+  r:50%::after
+  bg:primary::after
+  bg:primary-dark::after@dark
+  translate(-50%,-50%)::after
+  opacity:0::after
+  ~opacity|200ms|ease-in::after
 `

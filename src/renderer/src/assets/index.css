@@ -2,9 +2,33 @@
 @import '@master/normal.css';
 @import '@master/keyframes.css';
 
+@font-face {
+  font-family: 'HunInn';
+  src: url('../assets/fonts/jf-openhuninn-1.1.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'KosugiMaru';
+  src: url('../assets/fonts/KosugiMaru-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Scada';
+  src: url('../assets/fonts/Scada-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Scada';
+  src: url('../assets/fonts/Scada-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body {
-  font-family: 'Scada', 'Kosugi Maru', 'Noto Sans', sans-serif;
+  font-family: 'Scada', 'KosugiMaru', 'HunInn', sans-serif;
 }
 
 .drag-region\:drag {
