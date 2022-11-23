@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Noto+Sans:wght@300;400;500;600;700&family=Scada:wght@400;700&display=swap');
 @import '@master/normal.css';
 @import '@master/keyframes.css';
 
 html,
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Scada', 'Kosugi Maru', 'Noto Sans', sans-serif;
 }
 
 .drag-region\:drag {
