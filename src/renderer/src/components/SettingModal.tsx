@@ -8,10 +8,9 @@ interface SettingModalProps {
   close: () => void
 }
 
-export default function SettingModal({
-  isOpen,
-  close
-}: SettingModalProps): React.ReactPortal | null {
+export default function SettingModal(props: SettingModalProps): React.ReactPortal | null {
+  const { isOpen, close } = props
+
   /* State */
   const setting = useStore((state) => state.setting)
   const updateSetting = useStore((state) => state.updateSetting)

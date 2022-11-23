@@ -15,9 +15,7 @@ export default function Sidebar(): JSX.Element {
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
   const [isOpen, setIsOpen] = useState(false) // If true will open setting modal
-  const [animation, setAnimation] = useState({
-    rotate: false
-  })
+  const [isRotate, setIsRotate] = useState(false)
 
   // Get directory path through dialog
   const handleSelectFolder = async (): Promise<void> => {
@@ -33,10 +31,10 @@ export default function Sidebar(): JSX.Element {
     }
   }
 
-  const handleModal = (): void => setIsOpen(!isOpen)
+  const handleModal = (): void => setIsOpen((prev) => !prev)
 
   const handleReload = async (): Promise<void> => {
-    setAnimation({ ...animation, rotate: true })
+    setIsRotate(true)
     const list = await window.api.getAudioList(directoryPath)
     updateAudioList(list)
   }
@@ -54,8 +52,8 @@ export default function Sidebar(): JSX.Element {
           <IconButton
             icon={
               <TbRefresh
-                className={animation.rotate ? '@rotate|1s' : ''}
-                onAnimationEnd={(): void => setAnimation({ ...animation, rotate: false })}
+                className={isRotate ? '@rotate|1s' : ''}
+                onAnimationEnd={(): void => setIsRotate(false)}
               />
             }
             onClick={handleReload}

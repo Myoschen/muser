@@ -4,8 +4,9 @@ interface SliderProps extends React.InputHTMLAttributes<HTMLInputElement> {
   styles?: string
 }
 
-export default function Slider({ styles, ...props }: SliderProps): JSX.Element {
-  return <StyledInput className={styles} type="range" min={0} {...props} />
+export default function Slider(props: SliderProps): JSX.Element {
+  const { styles, ...rest } = props
+  return <StyledInput className={styles} type="range" min={0} {...rest} />
 }
 
 const StyledInput = el.input`

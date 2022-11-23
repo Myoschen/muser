@@ -7,7 +7,8 @@ interface AudioItemProps {
   audio: string
 }
 
-export default function AudioItem({ index, audio }: AudioItemProps): JSX.Element {
+export default function AudioItem(props: AudioItemProps): JSX.Element {
+  const { index, audio } = props
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
   const name = useMemo(() => audio.split('.')[0], [audio])
   const handleClick = (): void => updateCurrentAudio(index)

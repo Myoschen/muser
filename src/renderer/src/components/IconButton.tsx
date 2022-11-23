@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import el from '@master/style-element.react'
 
 interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -5,13 +6,16 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   styles?: string
 }
 
-export default function IconButton({ icon, styles, ...props }: IconButtonProps): JSX.Element {
+function IconButton(props: IconButtonProps): JSX.Element {
+  const { icon, styles, ...rest } = props
   return (
-    <Button className={styles} {...props}>
+    <Button className={styles} {...rest}>
       {icon}
     </Button>
   )
 }
+
+export default memo(IconButton)
 
 const Button = el.button`
   drag-region:no-drag

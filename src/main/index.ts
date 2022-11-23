@@ -1,5 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'electron'
 import { electronApp, optimizer, is, platform } from '@electron-toolkit/utils'
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import * as path from 'path'
 import handler from './handler'
 import { Channel } from './contants'
@@ -54,6 +55,10 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  installExtension(REACT_DEVELOPER_TOOLS, { loadExtensionOptions: { allowFileAccess: true } })
+    .then((name) => console.log(`Added Extension: ${name}`))
+    .catch((error) => console.error(`An error occurred: ${error}`))
+
   // Set app user model id for windows
   electronApp.setAppUserModelId('myoschen.muser.app')
 

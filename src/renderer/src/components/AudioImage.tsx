@@ -6,7 +6,8 @@ interface AudioImageProps {
 }
 
 // TODO Replace image if src exists
-export default function AudioImage({ src }: AudioImageProps): JSX.Element {
+export default function AudioImage(props: AudioImageProps): JSX.Element {
+  const { src } = props
   return (
     <ImageContainer>
       <Image src={src || MuserIcon} alt="music-list-image" />
