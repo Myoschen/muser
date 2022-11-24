@@ -24,6 +24,6 @@ const ImageContainer = el.div`
 
 const Image = el.img`
   w:320
-  drop-shadow(0|5|20|secondary-dark/.15)
-  drop-shadow(0|5|20|secondary/.15)@dark
+  hue-rotate(0)
+  hue-rotate(135)@dark
 `
