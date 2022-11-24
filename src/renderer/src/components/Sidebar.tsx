@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { TbChartCandle, TbFolder, TbRefresh } from 'react-icons/tb'
+import { useMemo, useState } from 'react'
+import { TbChartCandle, TbFolder } from 'react-icons/tb'
 import el from '@master/style-element.react'
 import AudioList from '@renderer/components/AudioList'
 import SettingModal from '@renderer/components/SettingModal'
@@ -14,8 +14,8 @@ export default function Sidebar(): JSX.Element {
   const updateAudioList = useStore((state) => state.updateAudioList)
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
+  const directoryName = useMemo(() => directoryPath.split('\\').at(-1), [directoryPath])
   const [isOpen, setIsOpen] = useState(false) // If true will open setting modal
-  const [isRotate, setIsRotate] = useState(false)
 
   // Get directory path through dialog
   const handleSelectFolder = async (): Promise<void> => {
@@ -33,12 +33,6 @@ export default function Sidebar(): JSX.Element {
 
   const handleModal = (): void => setIsOpen((prev) => !prev)
 
-  const handleReload = async (): Promise<void> => {
-    setIsRotate(true)
-    const list = await window.api.getAudioList(directoryPath)
-    updateAudioList(list)
-  }
-
   return (
     <>
       <Container>
@@ -49,17 +43,8 @@ export default function Sidebar(): JSX.Element {
         <Divider />
         <AudioList />
         <StatusBar>
-          <IconButton
-            icon={
-              <TbRefresh
-                className={isRotate ? '@rotate|1s' : ''}
-                onAnimationEnd={(): void => setIsRotate(false)}
-              />
-            }
-            onClick={handleReload}
-          />
-          <span className="f:14 ls:2 color:primary color:primary-dark@dark">
-            {directoryPath.split('\\').at(-1) || 'Please select a folder containing audio.'}
+          <span className="ls:1 color:primary color:primary-dark@dark">
+            {directoryName || 'Please select a folder containing audio.'}
           </span>
         </StatusBar>
       </Container>
@@ -85,8 +70,6 @@ const Control = el.div`
 `
 
 const StatusBar = el.div`
-  grid
-  grid-template-cols:50px|auto
-  ai:center
-  ji:start
+  flex
+  jc:center
 `

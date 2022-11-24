@@ -27,6 +27,7 @@
     "@master/literal": "^1.0.11",
     "@master/normal.css": "^1.9.7",
     "@master/style-element.react": "^1.1.6",
+    "chokidar": "^3.5.3",
     "electron-settings": "^4.0.2",
     "electron-store": "^8.1.0",
     "electron-updater": "^4.6.5",
