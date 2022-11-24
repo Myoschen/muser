@@ -8,6 +8,12 @@ const api = {
   onSetup: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
     ipcRenderer.once(Channel.APP_SETTING_SETUP, callback)
   },
+  onReload: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
+    ipcRenderer.on(Channel.FS_NEED_RELOAD, callback)
+  },
+  removeOnReload: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
+    ipcRenderer.removeListener(Channel.FS_NEED_RELOAD, callback)
+  },
   updateAppSetting: async (args: unknown): Promise<void> =>
     await ipcRenderer.invoke(Channel.APP_SETTING_UPDATE, args),
   closeApp: async (): Promise<void> => await ipcRenderer.invoke(Channel.APP_CLOSE),

@@ -1,7 +1,10 @@
 import { BrowserWindow, dialog, IpcMainInvokeEvent } from 'electron'
 import settings from 'electron-settings'
 import { readdir } from 'fs/promises'
-import { extname } from 'path'
+import { extname, join } from 'path'
+import { homedir } from 'os'
+import chokidar from 'chokidar'
+import { Channel } from './contants'
 
 interface Setting {
   directoryPath: string
@@ -14,7 +17,7 @@ interface Setting {
 if (!settings.hasSync('app')) {
   settings.setSync({
     app: {
-      directoryPath: '',
+      directoryPath: join(homedir(), 'Music'),
       theme: 'light',
       closeAction: 'quit',
       defaultVolume: 0.5
@@ -22,19 +25,58 @@ if (!settings.hasSync('app')) {
   })
 }
 
+let watcher: chokidar.FSWatcher | null
+
+async function initWatcher(window: BrowserWindow): Promise<void> {
+  const path = (await settings.get('app.directoryPath')) as unknown as string
+  if (path !== '') {
+    watcher = chokidar.watch(path, { ignoreInitial: true })
+    watcher.on('add', () => {
+      window.webContents.send(Channel.FS_NEED_RELOAD)
+    })
+    watcher.on('unlink', () => {
+      window.webContents.send(Channel.FS_NEED_RELOAD)
+    })
+  }
+}
+
+function addPathToWatcher(path: string, window: BrowserWindow): void {
+  if (watcher) {
+    watcher.add(path)
+  } else {
+    watcher = chokidar.watch(path, { ignoreInitial: true })
+    watcher.on('add', () => {
+      window.webContents.send(Channel.FS_NEED_RELOAD)
+    })
+    watcher.on('unlink', () => {
+      window.webContents.send(Channel.FS_NEED_RELOAD)
+    })
+  }
+}
+
+function removePathFromWatcher(path: string): void {
+  if (watcher) {
+    watcher.unwatch(path)
+  }
+}
+
 /**
  * It gets the directory path, sets it in the settings, gets the file names, and returns the directory
  * path and file names
  * @returns An array of strings.
  */
-async function readDirectory(): Promise<[string, string[]] | undefined> {
+async function readDirectory(event: IpcMainInvokeEvent): Promise<[string, string[]] | undefined> {
   try {
+    const window = BrowserWindow.fromWebContents(event.sender)
     const paths = await getDirectoryPath()
     if (!paths) return undefined
     const directoryPath = paths[0]
+    const oldPath = (await settings.get('app.directoryPath')) as unknown as string
+    removePathFromWatcher(oldPath)
     await settings.set('app.directoryPath', directoryPath)
-    const stored = (await settings.get('app.directoryPath')) as unknown as string
-    const fileNames = (await getFileNames(stored, ['.mp3'])) as string[]
+    const newPath = (await settings.get('app.directoryPath')) as unknown as string
+    addPathToWatcher(newPath, window!)
+    const fileNames = (await getFileNames(newPath, ['.mp3'])) as string[]
     return [directoryPath, fileNames]
   } catch (error) {
     if (error instanceof Error) {
@@ -181,7 +223,8 @@ const handler = {
   getAudioList,
   showMessage,
   closeWindow,
-  updateAppSetting
+  updateAppSetting,
+  initWatcher
 }
 
 export default handler

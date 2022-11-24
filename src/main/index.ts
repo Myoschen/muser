@@ -48,6 +48,7 @@ function createWindow(): void {
 
   mainWindow.webContents.once('did-finish-load', () => {
     mainWindow.webContents.send(Channel.APP_SETTING_SETUP, handler.getAppSetting())
+    handler.initWatcher(mainWindow)
   })
 }
 

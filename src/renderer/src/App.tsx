@@ -7,6 +7,7 @@ import useStore from '@renderer/store'
 
 export default function App(): JSX.Element {
   const theme = useStore((state) => state.setting.theme)
+  const directoryPath = useStore((state) => state.setting.directoryPath)
   const updateSetting = useStore((state) => state.updateSetting)
   const updateAudioList = useStore((state) => state.updateAudioList)
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
@@ -19,6 +20,18 @@ export default function App(): JSX.Element {
       updateCurrentAudio(0)
     })
   }, [])
+
+  useEffect(() => {
+    const callback = async (): Promise<void> => {
+      const list = await window.api.getAudioList(directoryPath)
+      updateAudioList(list)
+      updateCurrentAudio(0)
+    }
+    window.api.onReload(callback)
+    return () => {
+      window.api.removeOnReload(callback)
+    }
+  }, [directoryPath])
 
   useEffect(() => {
     const body = document.querySelector('body')

@@ -103,7 +103,7 @@ export default function SettingModal(props: SettingModalProps): React.ReactPorta
               <option value="dark">dark</option>
             </select>
             <Label htmlFor="closeAction">Close Action</Label>
-            <div className="flex gap:8" id="closeAction">
+            <div className="flex gap:16" id="closeAction">
               <Radio
                 type="radio"
                 value="quit"
@@ -228,7 +228,7 @@ const Radio = el.input`
 const RadioLabel = el.label`
   flex
   ai:center
-  gap:4
+  gap:8
   cursor:pointer
   color:primary
   color:primary-dark@dark
