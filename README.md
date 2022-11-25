@@ -12,7 +12,13 @@
 
 ## Preview
 
-![preview](./preview.png)
+### Light mode
+
+![preview-light](./preview-light.png)
+
+### Dark mode
+
+![preview-dark](./preview-dark.png)
 
 ## Usage
 

@@ -1,9 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Noto+Sans:wght@300;400;500;600;700&family=Scada:wght@400;700&display=swap');
 @import '@master/normal.css';
+@import '@master/keyframes.css';
+
+@font-face {
+  font-family: 'HunInn';
+  src: url('../assets/fonts/jf-openhuninn-1.1.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'KosugiMaru';
+  src: url('../assets/fonts/KosugiMaru-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Scada';
+  src: url('../assets/fonts/Scada-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Scada';
+  src: url('../assets/fonts/Scada-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 html,
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Scada', 'KosugiMaru', 'HunInn', sans-serif;
 }
 
 .drag-region\:drag {

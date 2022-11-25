@@ -1,7 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'electron'
 import { electronApp, optimizer, is, platform } from '@electron-toolkit/utils'
+import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import * as path from 'path'
 import handler from './handler'
+import { Channel } from './contants'
 
 function createWindow(): void {
   // Create the browser window.
@@ -27,7 +29,6 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
-    // Create Tray
     createTray(mainWindow)
     mainWindow.show()
   })
@@ -46,7 +47,8 @@ function createWindow(): void {
   }
 
   mainWindow.webContents.once('did-finish-load', () => {
-    mainWindow.webContents.send('app:init-config', handler.getConfig())
+    mainWindow.webContents.send(Channel.APP_SETTING_SETUP, handler.getAppSetting())
+    handler.initWatcher(mainWindow)
   })
 }
 
@@ -54,8 +56,14 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  if (is.dev) {
+    installExtension(REACT_DEVELOPER_TOOLS, { loadExtensionOptions: { allowFileAccess: true } })
+      .then((name) => console.log(`Added Extension: ${name}`))
+      .catch((error) => console.error(`An error occurred: ${error}`))
+  }
+
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('myoschen.muser.app')
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -86,13 +94,10 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 function setIpcHandler(): void {
-  // ipcMain.once('app:init-finished', (event) => {
-  //   const win = BrowserWindow.fromWebContents(event.sender)
-  //   win?.show()
-  // })
-  ipcMain.handle('dialog:read-directory', handler.readDirectory)
-  ipcMain.handle('music:get-audio-list', handler.getAudioList)
-  ipcMain.handle('app:close', handler.hideOrCloseWindow)
+  ipcMain.handle(Channel.FS_READ_DIRECTORY, handler.readDirectory)
+  ipcMain.handle(Channel.FS_GET_AUDIO_LIST, handler.getAudioList)
+  ipcMain.handle(Channel.APP_SETTING_UPDATE, handler.updateAppSetting)
+  ipcMain.handle(Channel.APP_CLOSE, handler.closeWindow)
 }
 
 function createTray(win: BrowserWindow): void {
@@ -103,20 +108,20 @@ function createTray(win: BrowserWindow): void {
     { label: 'Muser' },
     { type: 'separator' },
     {
-      label: '版本',
+      label: 'Version',
       type: 'normal',
       click: (): void => {
-        handler.showMessage(`當前版本為 ${app.getVersion()}`, win)
+        handler.showMessage(`Current version is ${app.getVersion()}.`, win)
       }
     },
     {
-      label: '關於',
+      label: 'About',
       type: 'normal',
       click: (): void => {
-        handler.showMessage('A simple music player.', win)
+        handler.showMessage('Muser a simple music player.', win)
       }
     },
-    { label: '結束', type: 'normal', role: 'quit' }
+    { label: 'Close', type: 'normal', role: 'quit' }
   ])
   tray.on('double-click', () => {
     win.show()

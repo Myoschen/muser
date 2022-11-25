@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import el from '@master/style-element.react'
 import {
   TbPlayerPause,
   TbPlayerPlay,
@@ -11,37 +12,34 @@ import {
   TbVolumeOff
 } from 'react-icons/tb'
 import IconButton from '@renderer/components/IconButton'
-import ProgressBar from '@renderer/components/ProgressBar'
+import Slider from '@renderer/components/Slider'
 import useStore from '@renderer/store'
 import { secondsToTime } from '@renderer/utils/time'
 
-export default function Control(): JSX.Element {
-  // Global State
-  const folderPath = useStore((state) => state.directory_path)
+export default function AudioControl(): JSX.Element {
+  const defaultVolume = useStore((state) => state.setting.defaultVolume)
+  const directoryPath = useStore((state) => state.setting.directoryPath)
   const currentAudio = useStore((state) => state.currentAudio)
   const currentAudioName = useStore((state) => state.currentAudioName)
   const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
 
-  // State
-  const audioSource = useMemo(
-    () => `${folderPath}\\${currentAudioName}`,
-    [folderPath, currentAudioName]
+  const source = useMemo(
+    () => `${directoryPath}\\${currentAudioName}`,
+    [directoryPath, currentAudioName]
   )
   const audioRef = useRef<HTMLAudioElement>(null)
   const [status, setStatus] = useState({
     isPlaying: false,
-    isLoaded: false,
-    isMuted: false
+    isLoaded: false
   })
   const [isDisplay, setIsDisplay] = useState(false)
-  const [volume, setVolume] = useState(0.5)
+  const [volume, setVolume] = useState(0)
   const [repeatType, setRepeatType] = useState<'off' | 'once' | 'all'>('off')
   const [timeDetail, setTimeDetail] = useState({
     current: 0,
     duration: 0
   })
 
-  // Handler
   const handleUpdateTime = (): void => {
     if (audioRef.current) {
       const current = audioRef.current.currentTime
@@ -95,11 +93,15 @@ export default function Control(): JSX.Element {
   const handleError = (): void => setStatus({ ...status, isLoaded: false })
   const handleVolume = (e: React.ChangeEvent<HTMLInputElement>): void =>
     setVolume(Number(e.target.value))
-  const handleMuted = (): void => setStatus({ ...status, isMuted: !status.isMuted })
+  const handleDisplay = (): void => setIsDisplay(!isDisplay)
 
   useEffect(() => {
     setStatus({ ...status, isPlaying: true })
-  }, [folderPath])
+  }, [directoryPath, currentAudio])
+
+  useEffect(() => {
+    setVolume(defaultVolume)
+  }, [defaultVolume])
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.volume = volume
@@ -107,75 +109,110 @@ export default function Control(): JSX.Element {
 
   return (
     <>
-      <div className="flex:1">
-        <div className="w:full p:24 flex jc:space-between ai:center gap:16">
-          <span className="f:14 ls:2">00:00</span>
-          <ProgressBar
-            styles="flex:1"
-            max={timeDetail.duration || 0}
-            value={timeDetail.current}
-            onChange={handleDrag}
-          />
-          <span className="f:14 ls:2">
-            {isNaN(timeDetail.duration) ? '00:00' : secondsToTime(timeDetail.duration)}
-          </span>
-        </div>
-        <div className="mt:12 flex jc:center gap:24">
-          <div
-            className="rel"
-            onMouseEnter={(): void => setIsDisplay(true)}
-            onMouseLeave={(): void => setIsDisplay(false)}
-          >
-            <IconButton onClick={handleMuted} disabled={!status.isLoaded}>
-              {status.isMuted || volume === 0 ? <TbVolumeOff /> : <TbVolume />}
-            </IconButton>
-            <div
-              className={`abs top:-50% left:50% h:32 p:8 r:4 shadow:0|1|4|black/.1 transform-origin:left rotate(-90deg) bg:white ${
-                isDisplay ? 'flex' : 'hide'
-              }`}
-            >
-              <ProgressBar
-                max={1.0}
-                value={volume}
-                onChange={handleVolume}
-                step={0.1}
-                styles="w:80px"
-              />
-            </div>
-          </div>
-          <IconButton onClick={handlePrev} disabled={!status.isLoaded}>
-            <TbPlayerTrackPrev />
-          </IconButton>
-          <IconButton onClick={handlePlay} disabled={!status.isLoaded}>
-            {status.isPlaying ? <TbPlayerPause /> : <TbPlayerPlay />}
-          </IconButton>
-          <IconButton onClick={handleNext} disabled={!status.isLoaded}>
-            <TbPlayerTrackNext />
-          </IconButton>
-          <IconButton onClick={handleRepeatType} disabled={!status.isLoaded}>
-            {repeatType === 'off' ? (
-              <TbRepeatOff />
-            ) : repeatType === 'once' ? (
-              <TbRepeatOnce />
-            ) : (
-              <TbRepeat />
-            )}
-          </IconButton>
-        </div>
-      </div>
       <audio
         onLoadedMetadata={handleUpdateTime}
         onTimeUpdate={handleUpdateTime}
         onEnded={handleEnded}
         onLoadedData={handleLoaded}
         onError={handleError}
-        src={audioSource}
+        src={source}
         ref={audioRef}
         autoPlay={true}
         loop={repeatType === 'once'}
-        muted={status.isMuted}
         preload="auto"
-      ></audio>
+      />
+      <Container>
+        <DurationContainer>
+          <DurationText>00:00</DurationText>
+          <DurationText className="o:1">
+            {isNaN(timeDetail.duration) ? '00:00' : secondsToTime(timeDetail.duration)}
+          </DurationText>
+          <Slider
+            styles="flex:1"
+            max={timeDetail.duration || 0}
+            value={timeDetail.current}
+            onChange={handleDrag}
+          />
+        </DurationContainer>
+        <Control>
+          <div className="rel">
+            <IconButton
+              icon={volume === 0 ? <TbVolumeOff /> : <TbVolume />}
+              onClick={handleDisplay}
+              disabled={!status.isLoaded}
+            />
+            <div
+              className={
+                (isDisplay ? 'flex' : 'hide') +
+                ' abs top:-80% left:50% h:32 p:8 r:4 b:1|solid|primary/.15 border-color:primary-dark/.15@dark bg:secondary bg:secondary-dark@dark transform-origin:left rotate(-90deg)'
+              }
+            >
+              <Slider
+                max={1.0}
+                value={volume}
+                onChange={handleVolume}
+                step={0.01}
+                styles="w:80px"
+              />
+            </div>
+          </div>
+          <IconButton
+            icon={<TbPlayerTrackPrev />}
+            onClick={handlePrev}
+            disabled={!status.isLoaded}
+          />
+          <IconButton
+            icon={status.isPlaying ? <TbPlayerPause /> : <TbPlayerPlay />}
+            onClick={handlePlay}
+            disabled={!status.isLoaded}
+          />
+          <IconButton
+            icon={<TbPlayerTrackNext />}
+            onClick={handleNext}
+            disabled={!status.isLoaded}
+          />
+          <IconButton
+            icon={
+              repeatType === 'off' ? (
+                <TbRepeatOff />
+              ) : repeatType === 'once' ? (
+                <TbRepeatOnce />
+              ) : (
+                <TbRepeat />
+              )
+            }
+            onClick={handleRepeatType}
+            disabled={!status.isLoaded}
+          />
+        </Control>
+      </Container>
     </>
   )
 }
+
+const Container = el.div`
+  flex:1
+`
+
+const DurationContainer = el.div`
+  w:full
+  p:24
+  flex
+  jc:space-between
+  ai:center
+  gap:16
+`
+
+const DurationText = el.span`
+  f:14
+  ls:2
+  color:primary
+  color:primary-dark@dark
+`
+
+const Control = el.div`
+  mt:12
+  flex
+  jc:center
+  gap:24
+`
