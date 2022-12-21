@@ -15,8 +15,11 @@ import IconButton from '@renderer/components/IconButton'
 import Slider from '@renderer/components/Slider'
 import useStore from '@renderer/store'
 import { secondsToTime } from '@renderer/utils/time'
+import { useClickAway } from '@renderer/hooks/useClickAway'
 
 export default function AudioControl(): JSX.Element {
+  const volumePopupRef = useRef(null)
+
   const defaultVolume = useStore((state) => state.setting.defaultVolume)
   const directoryPath = useStore((state) => state.setting.directoryPath)
   const currentAudio = useStore((state) => state.currentAudio)
@@ -107,6 +110,8 @@ export default function AudioControl(): JSX.Element {
     if (audioRef.current) audioRef.current.volume = volume
   }, [volume])
 
+  useClickAway(volumePopupRef, () => setIsDisplay(false))
+
   return (
     <>
       <audio
@@ -135,7 +140,7 @@ export default function AudioControl(): JSX.Element {
           />
         </DurationContainer>
         <Control>
-          <div className="rel">
+          <div ref={volumePopupRef} className="rel">
             <IconButton
               icon={volume === 0 ? <TbVolumeOff /> : <TbVolume />}
               onClick={handleDisplay}
