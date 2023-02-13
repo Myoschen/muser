@@ -1,5 +1,29 @@
 # Changelog
 
+<a name="1.1.0"></a>
+## 1.1.0 (2023-02-13)
+
+### Added
+
+- ➕ Some dependency package added or removed [[bf056b8](https://github.com/Myoschen/muser/commit/bf056b8facf72cf97ba2edf594e9184e765304d6)]
+
+### Changed
+
+- ♻️ Refactor the audio player [[8323ed0](https://github.com/Myoschen/muser/commit/8323ed06987d26eeede951bf25d11c456423287d)]
+- 🚨 Close a rule [[ffe0c6b](https://github.com/Myoschen/muser/commit/ffe0c6b79de650a8ad5c007be3b12f53ed0337e2)]
+- 🔧 Add some path alias and shared types [[60459bf](https://github.com/Myoschen/muser/commit/60459bf9b1e32d914d8db7e360b26fa56fa3cd2f)]
+- ⬆️ Upgrade deps [[19a77de](https://github.com/Myoschen/muser/commit/19a77de401906cdb3ed04172132083319ac5087b)]
+
+### Miscellaneous
+
+-  Merge branch &#x27;develop&#x27; [[4c9436d](https://github.com/Myoschen/muser/commit/4c9436d625d95b1ab891fddcdd73c695f7d83b5f)]
+- 📝 Fix the Screenshots anchor [[2992519](https://github.com/Myoschen/muser/commit/2992519ed1068cf0e8d15b3abf52638a823cf87b)]
+- 📝 Change the Screenshots icon [[f339c1f](https://github.com/Myoschen/muser/commit/f339c1f4fe7519d225d93a2992366df91c835b77)]
+- 📝 Update README [[eaa6b33](https://github.com/Myoschen/muser/commit/eaa6b33cc60a6813164c248247570c1be901d77e)]
+- 📄 Add license [[be684f5](https://github.com/Myoschen/muser/commit/be684f579ea057935b3ed7f7b5924d5d7fcc93e7)]
+- 📝 Update README and CHANGELOG [[a07c80b](https://github.com/Myoschen/muser/commit/a07c80bc26ea96ac55573bdd5fa5dff514c1bf4f)]
+
+
 <a name="1.0.1"></a>
 
 ## 1.0.1 (2022-12-22)
