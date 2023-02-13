@@ -44,7 +44,7 @@
 
 <br>
 
-## :frame_with_picture: Screenshots ##
+## :camera: Screenshots ##
 
 ### :sunny: Light mode ###
 
