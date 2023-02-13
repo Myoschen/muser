@@ -1,8 +1,8 @@
 export const enum Channel {
-  APP_SETTING_SETUP = 'app:setting-setup',
-  APP_SETTING_UPDATE = 'app:setting-update',
+  APP_CONFIGURATION_SETUP = 'app:configuration-setup',
+  APP_CONFIGURATION_UPDATE = 'app:configuration-update',
   APP_CLOSE = 'app:close',
   FS_READ_DIRECTORY = 'fs:read-directory',
-  FS_GET_AUDIO_LIST = 'fs:get-audio-list',
-  FS_NEED_RELOAD = 'fs:need-reload'
+  FS_GET_MUSIC_LIST = 'fs:get-music-list',
+  FS_RELOAD = 'fs:reload'
 }

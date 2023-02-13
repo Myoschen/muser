@@ -3,24 +3,24 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 import { Channel } from '../main/contants'
 
-// Custom APIs for renderer
 const api = {
+  // 初始化 Muser 配置
   onSetup: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
-    ipcRenderer.once(Channel.APP_SETTING_SETUP, callback)
+    ipcRenderer.once(Channel.APP_CONFIGURATION_SETUP, callback)
   },
   onReload: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
-    ipcRenderer.on(Channel.FS_NEED_RELOAD, callback)
+    ipcRenderer.on(Channel.FS_RELOAD, callback)
   },
   removeOnReload: (callback: (event: IpcRendererEvent, ...args: any[]) => void): void => {
-    ipcRenderer.removeListener(Channel.FS_NEED_RELOAD, callback)
+    ipcRenderer.removeListener(Channel.FS_RELOAD, callback)
   },
-  updateAppSetting: async (args: unknown): Promise<void> =>
-    await ipcRenderer.invoke(Channel.APP_SETTING_UPDATE, args),
+  updateConfiguration: async (args: unknown): Promise<void> =>
+    await ipcRenderer.invoke(Channel.APP_CONFIGURATION_UPDATE, args),
   closeApp: async (): Promise<void> => await ipcRenderer.invoke(Channel.APP_CLOSE),
-  readDirectory: async (): Promise<[string, string[]] | undefined> =>
+  readDirectory: async (): Promise<string | undefined> =>
     await ipcRenderer.invoke(Channel.FS_READ_DIRECTORY),
-  getAudioList: async (directoryPath: string): Promise<string[]> =>
-    await ipcRenderer.invoke(Channel.FS_GET_AUDIO_LIST, directoryPath)
+  getMusicList: async (): Promise<Music[] | undefined> =>
+    await ipcRenderer.invoke(Channel.FS_GET_MUSIC_LIST)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

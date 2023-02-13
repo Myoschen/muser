@@ -1,9 +1,11 @@
 /* Prevent @master/css from initializing automatically */
+// 避免 @master/css 自動初始化
 window.MasterCSSManual = true
 
-import { Style, init } from '@master/css'
+import { init, Style } from '@master/css'
 
-// Reuse classes
+// Extend classes
+// 擴展類別
 Style.extend('classes', {
   scrollbar: `
     {w:5;h:5;rounded}::scrollbar
@@ -20,7 +22,8 @@ Style.extend('classes', {
   `
 })
 
-// Reuse colors
+// Extend colors
+// 擴展顏色
 Style.extend('colors', {
   primary: '7c91b3',
   'primary-dark': 'c89096',
@@ -28,4 +31,6 @@ Style.extend('colors', {
   'secondary-dark': '313742'
 })
 
+// Initialize @master/css
+// 初始化 @master/css
 init()

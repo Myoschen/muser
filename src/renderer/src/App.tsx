@@ -1,63 +1,29 @@
-import { useEffect } from 'react'
-import el from '@master/style-element.react'
-import Sidebar from '@renderer/components/Sidebar'
-import AudioPlayer from '@renderer/components/AudioPlayer'
-import CloseButton from '@renderer/components/CloseButton'
-import useStore from '@renderer/store'
+import { TbX, TbMinus } from 'react-icons/tb'
+import MusicPlayer from '@components/MusicPlayer'
+import Button from '@components/common/Button'
+import Sidebar from '@components/Sidebar/Sidebar'
+import useSetup from '@hooks/use-setup'
+import useThemeSwitch from '@hooks/use-theme-switch'
+import useWatchFiles from '@hooks/use-watch-files'
 
-export default function App(): JSX.Element {
-  const theme = useStore((state) => state.setting.theme)
-  const directoryPath = useStore((state) => state.setting.directoryPath)
-  const updateSetting = useStore((state) => state.updateSetting)
-  const updateAudioList = useStore((state) => state.updateAudioList)
-  const updateCurrentAudio = useStore((state) => state.updateCurrentAudio)
-
-  useEffect(() => {
-    window.api.onSetup(async (_event, args) => {
-      const list = await window.api.getAudioList(args['directoryPath'])
-      updateSetting(args)
-      updateAudioList(list)
-      updateCurrentAudio(0)
-    })
-  }, [])
-
-  useEffect(() => {
-    const callback = async (): Promise<void> => {
-      const list = await window.api.getAudioList(directoryPath)
-      updateAudioList(list)
-      updateCurrentAudio(0)
-    }
-    window.api.onReload(callback)
-    return () => {
-      window.api.removeOnReload(callback)
-    }
-  }, [directoryPath])
-
-  useEffect(() => {
-    const body = document.querySelector('body')
-    const toggleTheme = (next: string, prev: string): void => {
-      body?.classList.add(next)
-      body?.classList.remove(prev)
-    }
-    theme === 'light' ? toggleTheme('light', 'dark') : toggleTheme('dark', 'light')
-  }, [theme])
+export default function App() {
+  useSetup()
+  useThemeSwitch()
+  useWatchFiles()
 
   return (
-    <Container>
+    <div className="{user-select:none;user-drag:none;f:antialiased}_* rel grid grid-template-cols:300|1fr grid-template-rows:100vh">
+      {/* Sidebar 側邊欄 */}
       <Sidebar />
-      <AudioPlayer />
-      <CloseButton />
-    </Container>
+
+      {/* Music Player 音樂撥放器 */}
+      <MusicPlayer />
+
+      {/* Control Buttons 控制按鈕 */}
+      <div className="abs top:16 right:12 flex gap-x:4">
+        {/* <Button type="button" icon={<TbMinus />} /> */}
+        <Button type="button" icon={<TbX />} onClick={async () => await window.api.closeApp()} />
+      </div>
+    </div>
   )
 }
-
-/**
- * Styles
- */
-const Container = el.div`
-  {user-select:none;user-drag:none;f:antialiased}_*
-  rel
-  grid
-  grid-template-cols:300|1fr
-  grid-template-rows:100vh
-`
