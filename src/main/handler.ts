@@ -1,83 +1,67 @@
+import chokidar from 'chokidar'
 import { BrowserWindow, dialog, IpcMainInvokeEvent } from 'electron'
 import settings from 'electron-settings'
 import { readdir } from 'fs/promises'
-import { extname, join } from 'path'
 import { homedir } from 'os'
-import chokidar from 'chokidar'
+import { extname, join } from 'path'
 import { Channel } from './contants'
 
-interface Setting {
-  directoryPath: string
-  theme: 'light' | 'dark'
-  closeAction: 'quit' | 'hide'
-  defaultVolume: number
-}
-
-/* if setting.json not exists */
+// if setting.json not exists (first time use)
+// 當 setting.json 不存在
 if (!settings.hasSync('app')) {
   settings.setSync({
     app: {
-      directoryPath: join(homedir(), 'Music'),
+      directory: join(homedir(), 'Music'),
       theme: 'light',
       closeAction: 'quit',
-      defaultVolume: 0.5
+      defaultVolume: 0.15
     }
   })
 }
 
 let watcher: chokidar.FSWatcher | null
 
-async function initWatcher(window: BrowserWindow): Promise<void> {
-  const path = (await settings.get('app.directoryPath')) as unknown as string
+async function initWatcher(window: BrowserWindow) {
+  const path = (await settings.get('app.directory')) as unknown as string
   if (path !== '') {
     watcher = chokidar.watch(path, { ignoreInitial: true })
+
+    // When file is added
+    // 當檔案加入
     watcher.on('add', () => {
-      window.webContents.send(Channel.FS_NEED_RELOAD)
+      window.webContents.send(Channel.FS_RELOAD)
     })
+
+    // When file is removed
+    // 當檔案移除
     watcher.on('unlink', () => {
-      window.webContents.send(Channel.FS_NEED_RELOAD)
+      window.webContents.send(Channel.FS_RELOAD)
     })
   }
 }
 
-function addPathToWatcher(path: string, window: BrowserWindow): void {
+function addPathToWatcher(path: string) {
   if (watcher) {
     watcher.add(path)
-  } else {
-    watcher = chokidar.watch(path, { ignoreInitial: true })
-    watcher.on('add', () => {
-      window.webContents.send(Channel.FS_NEED_RELOAD)
-    })
-    watcher.on('unlink', () => {
-      window.webContents.send(Channel.FS_NEED_RELOAD)
-    })
   }
 }
 
-function removePathFromWatcher(path: string): void {
+function removePathFromWatcher(path: string) {
   if (watcher) {
     watcher.unwatch(path)
   }
 }
 
-/**
- * It gets the directory path, sets it in the settings, gets the file names, and returns the directory
- * path and file names
- * @returns An array of strings.
- */
-async function readDirectory(event: IpcMainInvokeEvent): Promise<[string, string[]] | undefined> {
+async function readDirectory() {
   try {
-    const window = BrowserWindow.fromWebContents(event.sender)
-    const paths = await getDirectoryPath()
+    const paths = await getDirectory()
     if (!paths) return undefined
-    const directoryPath = paths[0]
-    const oldPath = (await settings.get('app.directoryPath')) as unknown as string
+    const directory = paths[0]
+    const oldPath = (await settings.get('app.directory')) as unknown as string
     removePathFromWatcher(oldPath)
-    await settings.set('app.directoryPath', directoryPath)
-    const newPath = (await settings.get('app.directoryPath')) as unknown as string
-    addPathToWatcher(newPath, window!)
-    const fileNames = (await getFileNames(newPath, ['.mp3'])) as string[]
-    return [directoryPath, fileNames]
+    await settings.set('app.directory', directory)
+    addPathToWatcher(directory)
+    return directory
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message)
@@ -86,14 +70,10 @@ async function readDirectory(event: IpcMainInvokeEvent): Promise<[string, string
   }
 }
 
-/**
- * It returns a promise that resolves to an array of strings or undefined
- * @returns An array of strings or undefined.
- */
-async function getDirectoryPath(): Promise<string[] | undefined> {
+async function getDirectory() {
   try {
-    const result = await dialog.showOpenDialogSync({ properties: ['openDirectory'] })
-    return result
+    const paths = await dialog.showOpenDialogSync({ properties: ['openDirectory'] })
+    return paths
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message)
@@ -102,20 +82,15 @@ async function getDirectoryPath(): Promise<string[] | undefined> {
   }
 }
 
-/**
- * It returns a list of audio files in a given directory
- * @param {IpcMainInvokeEvent} _event - IpcMainInvokeEvent - This is the event that is passed to the
- * function.
- * @param {unknown} args - unknown
- * @returns A promise that resolves to an array of strings or undefined.
- */
-async function getAudioList(
-  _event: IpcMainInvokeEvent,
-  args: unknown
-): Promise<string[] | undefined> {
+async function getMusicList() {
   try {
-    const fileNames = await getFileNames(args as string, ['.mp3'])
-    return fileNames
+    const path = (await settings.get('app.directory')) as unknown as Configuration['directory']
+    const fileNames = await getFileNames(path, ['.mp3'])
+    const musicList: Music[] | undefined = fileNames?.map((fileName) => ({
+      name: fileName.split('.')[0],
+      src: join(path, fileName)
+    }))
+    return musicList
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message)
@@ -124,20 +99,16 @@ async function getAudioList(
   }
 }
 
-/**
- * It returns a promise that resolves to an array of file names in a given directory that have a given
- * extension
- * @param {string} path - The path to the directory you want to read.
- * @param {string[]} ext - string[] - an array of file extensions to filter by
- * @returns A Promise that resolves to an array of strings or undefined.
- */
-async function getFileNames(path: string, ext: string[]): Promise<string[] | undefined> {
+type FileSuffix = '.mp3' | '.mp4' | '.wav' | '.m4a' | '.flac' | '.wma' | '.aac'
+
+async function getFileNames(path: string, suffix: FileSuffix[]) {
   if (!path) return undefined
   try {
     const fileNames = await readdir(path)
-    const predicate = (f: string): boolean => ext.includes(extname(f))
-    const filtered = fileNames.filter(predicate)
-    return filtered
+    const filteredFileNames = fileNames.filter((fileName: string) =>
+      suffix.includes(extname(fileName) as FileSuffix)
+    )
+    return filteredFileNames
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message)
@@ -146,28 +117,18 @@ async function getFileNames(path: string, ext: string[]): Promise<string[] | und
   }
 }
 
-/**
- * It gets the app setting from the settings store
- * @returns Setting | undefined
- */
-function getAppSetting(): Setting {
-  const setting = settings.getSync('app') as unknown as Setting
-  return setting
+function getConfiguration() {
+  const configuration = settings.getSync('app') as unknown as Configuration
+  return configuration
 }
 
-/**
- * It updates the app setting
- * @param {IpcMainInvokeEvent} _event - IpcMainInvokeEvent - This is the event that is passed to the
- * function.
- * @param {unknown} args - unknown
- */
-async function updateAppSetting(_event: IpcMainInvokeEvent, args: unknown): Promise<void> {
+async function updateConfiguration(_event: IpcMainInvokeEvent, args: unknown) {
   try {
-    const setting = (await settings.get('app')) as unknown as Setting
+    const configuration = (await settings.get('app')) as unknown as Configuration
     await settings.set({
       app: {
-        directoryPath: setting.directoryPath,
-        ...(args as Partial<Omit<Setting, 'directoryPath'>>)
+        ...configuration,
+        ...(args as Partial<Omit<Configuration, 'directory'>>)
       }
     })
   } catch (error) {
@@ -177,16 +138,7 @@ async function updateAppSetting(_event: IpcMainInvokeEvent, args: unknown): Prom
   }
 }
 
-/**
- * It shows a message box with the given message and title, and returns the result of the message box
- * @param {string} message - The message to display in the dialog.
- * @param [window] - The window to show the message box in.
- * @returns A promise that resolves to a MessageBoxReturnValue or undefined.
- */
-async function showMessage(
-  message: string,
-  window?: Electron.BrowserWindow
-): Promise<Electron.MessageBoxReturnValue | undefined> {
+async function showMessage(message: string, window?: Electron.BrowserWindow) {
   try {
     if (window) {
       return await dialog.showMessageBox(window, { title: 'Muser', message })
@@ -200,14 +152,9 @@ async function showMessage(
   }
 }
 
-/**
- * It gets the value of the `app.closeAction` setting, and then either closes or hides the window
- * depending on the value
- * @param {IpcMainInvokeEvent} event - IpcMainInvokeEvent
- */
-async function closeWindow(event: IpcMainInvokeEvent): Promise<void> {
+async function closeWindow(event: IpcMainInvokeEvent) {
   try {
-    const type = (await settings.get('app.closeAction')) as unknown as Setting['closeAction']
+    const type = (await settings.get('app.closeAction')) as unknown as Configuration['closeAction']
     const window = BrowserWindow.fromWebContents(event.sender)
     type === 'quit' ? window?.close() : window?.hide()
   } catch (error) {
@@ -217,13 +164,16 @@ async function closeWindow(event: IpcMainInvokeEvent): Promise<void> {
   }
 }
 
+// TODO Minimal window
+// async function minimalWindow() {}
+
 const handler = {
   readDirectory,
-  getAppSetting,
-  getAudioList,
+  getConfiguration,
+  getMusicList,
   showMessage,
   closeWindow,
-  updateAppSetting,
+  updateConfiguration,
   initWatcher
 }
 

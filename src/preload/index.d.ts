@@ -1,4 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
+
 import type { API_TYPES } from './index'
 
 declare global {

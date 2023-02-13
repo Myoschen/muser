@@ -1,12 +1,13 @@
-import { app, shell, BrowserWindow, ipcMain, nativeImage, Tray, Menu } from 'electron'
-import { electronApp, optimizer, is, platform } from '@electron-toolkit/utils'
-import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
+import { app, BrowserWindow, ipcMain, Menu, nativeImage, shell, Tray } from 'electron'
+// import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer'
 import * as path from 'path'
-import handler from './handler'
+import { electronApp, is, optimizer, platform } from '@electron-toolkit/utils'
 import { Channel } from './contants'
+import handler from './handler'
 
-function createWindow(): void {
-  // Create the browser window.
+function createWindow() {
+  // Create the main window.
+  // 建立主視窗
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 600,
@@ -47,7 +48,7 @@ function createWindow(): void {
   }
 
   mainWindow.webContents.once('did-finish-load', () => {
-    mainWindow.webContents.send(Channel.APP_SETTING_SETUP, handler.getAppSetting())
+    mainWindow.webContents.send(Channel.APP_CONFIGURATION_SETUP, handler.getConfiguration())
     handler.initWatcher(mainWindow)
   })
 }
@@ -56,11 +57,11 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  if (is.dev) {
-    installExtension(REACT_DEVELOPER_TOOLS, { loadExtensionOptions: { allowFileAccess: true } })
-      .then((name) => console.log(`Added Extension: ${name}`))
-      .catch((error) => console.error(`An error occurred: ${error}`))
-  }
+  // if (is.dev) {
+  //   installExtension(REACT_DEVELOPER_TOOLS, { loadExtensionOptions: { allowFileAccess: true } })
+  //     .then((name) => console.log(`Added Extension: ${name}`))
+  //     .catch((error) => console.error(`An error occurred: ${error}`))
+  // }
 
   // Set app user model id for windows
   electronApp.setAppUserModelId('myoschen.muser.app')
@@ -95,8 +96,8 @@ app.on('window-all-closed', () => {
 // code. You can also put them in separate files and require them here.
 function setIpcHandler(): void {
   ipcMain.handle(Channel.FS_READ_DIRECTORY, handler.readDirectory)
-  ipcMain.handle(Channel.FS_GET_AUDIO_LIST, handler.getAudioList)
-  ipcMain.handle(Channel.APP_SETTING_UPDATE, handler.updateAppSetting)
+  ipcMain.handle(Channel.FS_GET_MUSIC_LIST, handler.getMusicList)
+  ipcMain.handle(Channel.APP_CONFIGURATION_UPDATE, handler.updateConfiguration)
   ipcMain.handle(Channel.APP_CLOSE, handler.closeWindow)
 }
 

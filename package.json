@@ -22,17 +22,18 @@
   "dependencies": {
     "@electron-toolkit/preload": "^1.0.2",
     "@electron-toolkit/utils": "^1.0.2",
-    "@master/css": "^1.37.7",
-    "@master/keyframes.css": "2.0.0-beta.47",
+    "@master/css": "^1.37.8",
     "@master/literal": "^1.0.11",
-    "@master/normal.css": "^1.9.7",
-    "@master/style-element.react": "^1.1.6",
+    "@master/normal.css": "2.0.0-beta.84",
+    "@reduxjs/toolkit": "^1.9.2",
     "chokidar": "^3.5.3",
+    "clsx": "^1.2.1",
     "electron-settings": "^4.0.2",
     "electron-store": "^8.1.0",
     "electron-updater": "^4.6.5",
+    "framer-motion": "^8.0.1",
     "react-icons": "^4.6.0",
-    "zustand": "^4.1.4"
+    "react-redux": "^8.0.5"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^1.0.1",
@@ -42,11 +43,11 @@
     "@types/react-dom": "18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
-    "@vitejs/plugin-react": "^2.1.0",
-    "electron": "^20.3.2",
+    "@vitejs/plugin-react": "^3.0.0",
+    "electron": "^22.0.0",
     "electron-builder": "^23.6.0",
     "electron-devtools-installer": "^3.2.0",
-    "electron-vite": "^1.0.14",
+    "electron-vite": "^1.0.16",
     "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -55,6 +56,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^4.8.4",
-    "vite": "^3.1.8"
+    "vite": "^4.0.3"
   }
 }
