@@ -33,7 +33,7 @@
 <hr>
 
 <p align="center">
-  <a href="#frame_with_picture-screenshots">Screenshots</a> &#xa0; | &#xa0;
+  <a href="#camera-screenshots">Screenshots</a> &#xa0; | &#xa0;
   <a href="#dart-about">About</a> &#xa0; | &#xa0;
   <a href="#rocket-technologies">Technologies</a> &#xa0; | &#xa0;
   <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
