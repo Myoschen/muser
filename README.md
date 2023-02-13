@@ -33,8 +33,8 @@
 <hr>
 
 <p align="center">
+  <a href="#frame_with_picture-screenshots">Screenshots</a> &#xa0; | &#xa0;
   <a href="#dart-about">About</a> &#xa0; | &#xa0;
-  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
   <a href="#rocket-technologies">Technologies</a> &#xa0; | &#xa0;
   <a href="#white_check_mark-requirements">Requirements</a> &#xa0; | &#xa0;
   <a href="#checkered_flag-starting">Starting</a> &#xa0; | &#xa0;
@@ -44,13 +44,13 @@
 
 <br>
 
-## 🖼️ Screenshots ##
+## :frame_with_picture: Screenshots ##
 
-### ☀️ Light mode ###
+### :sunny: Light mode ###
 
 ![preview-light](./preview-light.png)
 
-### 🌙 Dark mode ###
+### :crescent_moon: Dark mode ###
 
 ![preview-dark](./preview-dark.png)
 
@@ -92,7 +92,7 @@ $ pnpm dev
 
 ## :memo: License ##
 
-This project is under license from MIT. For more details, see the [LICENSE](LICENSE.md) file.
+This project is under license from MIT. For more details, see the [LICENSE](LICENSE) file.
 
 Made with :heart: by <a href="https://github.com/Myoschen" target="_blank">Myos</a>
 
