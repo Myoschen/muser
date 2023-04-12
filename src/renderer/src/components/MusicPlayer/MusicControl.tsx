@@ -1,22 +1,28 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChangeEventHandler, ReactEventHandler, useRef, useEffect } from 'react'
 import {
-  TbPlayerPause,
-  TbPlayerPlay,
-  TbPlayerSkipBack,
-  TbPlayerSkipForward,
-  TbRepeat,
-  TbRepeatOff,
-  TbRepeatOnce,
-  TbVolume,
-  TbVolumeOff
-} from 'react-icons/tb'
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconPlayerSkipBack,
+  IconPlayerSkipForward,
+  IconRepeat,
+  IconRepeatOff,
+  IconRepeatOnce,
+  IconVolume,
+  IconVolumeOff
+} from '@tabler/icons-react'
 import useClickAway from '@hooks/use-click-away'
 import { secondsToMinutes } from '@utils/time'
 import Button from '../common/Button'
 import Slider from '../common/Slider'
 import useToggle from '@hooks/use-toggle'
-import { useAppDispatch, useAppSelector, selectPlayer, selectMusic } from '@features/hooks'
+import {
+  useAppDispatch,
+  useAppSelector,
+  selectPlayer,
+  selectMusic,
+  selectConfiguration
+} from '@features/hooks'
 import {
   setCurrentLocation,
   setDuration,
@@ -27,14 +33,15 @@ import {
 } from '@features/slices/player'
 
 function MusicControl() {
-  const volumePopupRef = useRef<HTMLDivElement>(null)
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const [isPopupOpen, handleIsPopupOpen] = useToggle()
-
+  const { configuration } = useAppSelector(selectConfiguration)
   const { list } = useAppSelector(selectMusic)
   const { musicId, status, volume, duration, currentLocation, repeatType } =
     useAppSelector(selectPlayer)
   const dispatch = useAppDispatch()
+
+  const volumePopupRef = useRef<HTMLDivElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const [isPopupOpen, handleIsPopupOpen] = useToggle()
 
   // Next Song
   // 下一首
@@ -90,9 +97,19 @@ function MusicControl() {
   // 控制音樂當前進度
   const handleTimeSeek: ChangeEventHandler<HTMLInputElement> = (e) => {
     if (!audioRef.current) return
+    if (status === 'playing') {
+      audioRef.current.pause()
+    }
     const current = parseFloat(e.target.value)
     audioRef.current.currentTime = current
     dispatch(setCurrentLocation(current))
+  }
+
+  const handleTimeSeekEnd = () => {
+    if (!audioRef.current) return
+    if (status === 'playing') {
+      audioRef.current.play()
+    }
   }
 
   // When time update
@@ -105,12 +122,9 @@ function MusicControl() {
   // When music ended
   // 當音樂結束
   const handleEnded = () => {
-    if (!audioRef.current) return
-    audioRef.current.currentTime = 0
-    dispatch(setCurrentLocation(0))
     if (repeatType === 'off') {
-      audioRef.current.pause()
       dispatch(setPlayerStatus('stop'))
+      dispatch(setCurrentLocation(0))
     } else if (repeatType === 'all') {
       handleNext()
     }
@@ -118,18 +132,21 @@ function MusicControl() {
 
   useClickAway(volumePopupRef, () => handleIsPopupOpen(false))
 
-  // Switch music
-  // 切換音樂時
+  // when repeat all is on and the audio changes
   useEffect(() => {
     if (!audioRef.current) return
-    audioRef.current.currentTime = 0
-    dispatch(setCurrentLocation(0))
     if (repeatType === 'all') {
       audioRef.current.play()
-    } else if (repeatType === 'off') {
-      dispatch(setPlayerStatus('stop'))
+      dispatch(setPlayerStatus('playing'))
     }
-  }, [musicId])
+  }, [musicId, repeatType])
+
+  // when switching directory stop audio
+  useEffect(() => {
+    if (!audioRef.current) return
+    audioRef.current.pause()
+    dispatch(setPlayerStatus('stop'))
+  }, [configuration.directory])
 
   return (
     <div className="flex:1">
@@ -146,15 +163,16 @@ function MusicControl() {
         Your browser does not support the
         <code>audio</code> element.
       </audio>
-      <div className="w:full p:24 flex jc:space-between ai:center gap:16">
+      <div className="w:full p:24 grid grid-template-cols:1fr|8fr|1fr ji:center gap:16">
         <span className="f:14 ls:2 color:primary color:primary-dark@dark">
           {isNaN(currentLocation) ? '00:00' : secondsToMinutes(currentLocation)}
         </span>
         <Slider
-          styles="flex:1"
+          styles="js:stretch"
           max={duration || 0}
           value={currentLocation}
           onChange={handleTimeSeek}
+          onMouseUp={handleTimeSeekEnd}
           disabled={list.length === 0}
         />
         <span className="f:14 ls:2 color:primary color:primary-dark@dark">
@@ -164,7 +182,7 @@ function MusicControl() {
       <div className="mt:12 flex jc:center gap:24">
         <div ref={volumePopupRef} className="rel">
           <Button
-            icon={volume === 0 ? <TbVolumeOff /> : <TbVolume />}
+            icon={volume === 0 ? <IconVolumeOff size={16} /> : <IconVolume size={16} />}
             onClick={() => handleIsPopupOpen()}
             disabled={list.length === 0}
           />
@@ -188,21 +206,29 @@ function MusicControl() {
             )}
           </AnimatePresence>
         </div>
-        <Button icon={<TbPlayerSkipBack />} onClick={handlePrev} disabled={list.length === 0} />
         <Button
-          icon={status === 'playing' ? <TbPlayerPause /> : <TbPlayerPlay />}
+          icon={<IconPlayerSkipBack size={16} />}
+          onClick={handlePrev}
+          disabled={list.length === 0}
+        />
+        <Button
+          icon={status === 'playing' ? <IconPlayerPause size={16} /> : <IconPlayerPlay size={16} />}
           onClick={handlePlay}
           disabled={list.length === 0}
         />
-        <Button icon={<TbPlayerSkipForward />} onClick={handleNext} disabled={list.length === 0} />
+        <Button
+          icon={<IconPlayerSkipForward size={16} />}
+          onClick={handleNext}
+          disabled={list.length === 0}
+        />
         <Button
           icon={
             repeatType === 'off' ? (
-              <TbRepeatOff />
+              <IconRepeatOff size={16} />
             ) : repeatType === 'once' ? (
-              <TbRepeatOnce />
+              <IconRepeatOnce size={16} />
             ) : (
-              <TbRepeat />
+              <IconRepeat size={16} />
             )
           }
           onClick={handleRepeatType}
