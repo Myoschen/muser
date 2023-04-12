@@ -1,6 +1,6 @@
 import { AnimatePresence } from 'framer-motion'
 import { memo, useMemo } from 'react'
-import { TbChartCandle, TbFolder, TbPlaylist } from 'react-icons/tb'
+import { IconChartCandle, IconFolder, IconPlaylist } from '@tabler/icons-react'
 import useToggle from '@hooks/use-toggle'
 import { notify } from '@utils/notify'
 import MusicList from './MusicList'
@@ -41,9 +41,9 @@ function Sidebar() {
       <div className="p:16 flex flex:col bg:secondary/.5 bg:secondary-dark/.98@dark br:1|solid|black/.05 overflow:auto ~background-color|150ms|ease-in-out">
         <div className="drag-region:drag flex jc:space-between ai:center">
           {/* Select Directory Button 選擇路徑按鈕 */}
-          <Button icon={<TbFolder />} onClick={handleSelectDirectory} />
+          <Button icon={<IconFolder size={16} />} onClick={handleSelectDirectory} />
           {/* Setting Button 按鈕 */}
-          <Button icon={<TbChartCandle />} onClick={() => handleIsModalOpen()} />
+          <Button icon={<IconChartCandle size={16} />} onClick={() => handleIsModalOpen()} />
         </div>
 
         {/* Divider 分隔線 */}
@@ -54,7 +54,7 @@ function Sidebar() {
 
         {/* Current Folder Name 當前資料夾名稱 */}
         <div className="flex jc:center ai:center gap-x:4 mt:16 color:primary color:primary-dark@dark">
-          <TbPlaylist />
+          <IconPlaylist size={16} />
           <span className="ls:1">{folderName}</span>
         </div>
       </div>

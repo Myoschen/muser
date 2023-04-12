@@ -1,4 +1,4 @@
-import { TbX, TbMinus } from 'react-icons/tb'
+import { IconX, IconMinus } from '@tabler/icons-react'
 import MusicPlayer from '@components/MusicPlayer'
 import Button from '@components/common/Button'
 import Sidebar from '@components/Sidebar/Sidebar'
@@ -22,7 +22,11 @@ export default function App() {
       {/* Control Buttons 控制按鈕 */}
       <div className="abs top:16 right:12 flex gap-x:4">
         {/* <Button type="button" icon={<TbMinus />} /> */}
-        <Button type="button" icon={<TbX />} onClick={async () => await window.api.closeApp()} />
+        <Button
+          type="button"
+          icon={<IconX size={16} />}
+          onClick={async () => await window.api.closeApp()}
+        />
       </div>
     </div>
   )
