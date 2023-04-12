@@ -1,6 +1,26 @@
 # Changelog
 
+<a name="1.1.1"></a>
+
+## 1.1.1 (2023-04-12)
+
+### Changed
+
+- 💄 change react-icons to tabler-icons [[59eac10](https://github.com/Myoschen/muser/commit/59eac10998945affb0739b8a7ee20d8c45796fe9)]
+
+### Fixed
+
+- 🚑 fix bugs [[00ce744](https://github.com/Myoschen/muser/commit/00ce744728053cacaccd8ce4ea3525ff76c0e1e8)]
+
+### Miscellaneous
+
+- Merge branch &#x27;develop&#x27; [[0287d93](https://github.com/Myoschen/muser/commit/0287d93ebb96130e582e351e981f007aaac45a90)]
+- 📝 update screenshots [[061150e](https://github.com/Myoschen/muser/commit/061150eeae86118272928f02286122ecd5ab5776)]
+- Merge branch &#x27;develop&#x27; [[b87f01f](https://github.com/Myoschen/muser/commit/b87f01ff14c6c8fd36ceafb55cc030bf9b0eeefc)]
+- 📝 Update CHANGELOG [[47c0d5d](https://github.com/Myoschen/muser/commit/47c0d5d2c9a9777d31f17476bf6ea7472ebdb262)]
+
 <a name="1.1.0"></a>
+
 ## 1.1.0 (2023-02-13)
 
 ### Added
@@ -16,13 +36,12 @@
 
 ### Miscellaneous
 
--  Merge branch &#x27;develop&#x27; [[4c9436d](https://github.com/Myoschen/muser/commit/4c9436d625d95b1ab891fddcdd73c695f7d83b5f)]
+- Merge branch &#x27;develop&#x27; [[4c9436d](https://github.com/Myoschen/muser/commit/4c9436d625d95b1ab891fddcdd73c695f7d83b5f)]
 - 📝 Fix the Screenshots anchor [[2992519](https://github.com/Myoschen/muser/commit/2992519ed1068cf0e8d15b3abf52638a823cf87b)]
 - 📝 Change the Screenshots icon [[f339c1f](https://github.com/Myoschen/muser/commit/f339c1f4fe7519d225d93a2992366df91c835b77)]
 - 📝 Update README [[eaa6b33](https://github.com/Myoschen/muser/commit/eaa6b33cc60a6813164c248247570c1be901d77e)]
 - 📄 Add license [[be684f5](https://github.com/Myoschen/muser/commit/be684f579ea057935b3ed7f7b5924d5d7fcc93e7)]
 - 📝 Update README and CHANGELOG [[a07c80b](https://github.com/Myoschen/muser/commit/a07c80bc26ea96ac55573bdd5fa5dff514c1bf4f)]
-
 
 <a name="1.0.1"></a>
 
