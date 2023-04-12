@@ -46,13 +46,17 @@
 
 ## :camera: Screenshots ##
 
-### :sunny: Light mode ###
+### :sunny: Light ###
 
-![preview-light](./preview-light.png)
+![muser-light](./muser-light.png)
 
-### :crescent_moon: Dark mode ###
+### :crescent_moon: Dark ###
 
-![preview-dark](./preview-dark.png)
+![muser-dark](./muser-dark.png)
+
+### :gear: Setting ###
+
+![muser-setting](./muser-setting.png)
 
 ## :dart: About ##
 
